@@ -1,0 +1,39 @@
+/*/Parameter sheet
+C++ style comments and all whitespaces are ignored (you can disfigure names with them, if you want).
+Fields: '[name]={[list int]};', '[name]=[string];', '[name]="[string]";'
+List of ints is separated by commas, range of values - by hyphen. Unsigned integers only.
+Duplicate blocks are supported (will be merged). From duplicate entries only first one stays.
+/*/
+
+bhabha{
+//	run_mask="/spool/skim/Bhabha/ee%06d.nat";
+	run_mask="/space/data2/KEDR_RUNS/runs/daq%06d.nat";
+//	run_mask="/spool/users/boroden/skim/skim_ee%06d.nat";
+//	run_mask="/spool/users/boroden/skim/cp_skim%06d.nat";
+
+//	run_list={3519-3574,3844-3909,4710-5054,7806-7916,8208-8371,8872-9075,10160-10984,10985-11208,16338-17029};
+//	run_list={7806-7916,8208-8371,8872-9075};	//E=1843 MeV
+	run_list={7806-7916};
+	exp_events=0,5000,20000000;	//min, max, draw_everyN
+//	exp_events=0,10000000,20000000;	//min, max, draw_everyN
+
+//	sim_mask="/store/sim/ee/Bhabha/1530/theta-15-165-Real-51.dat";
+//	sim_mask="/store/sim/ee/Bhabha/1530/theta-10-170-Real-cmd-35.dat";
+//	sim_mask="/store/sim/ee/Bhabha/1548/theta-10-170-Real-35.dat";	//Lt=294.5 nb^-1; N=1000000
+//	sim_mask="/store/sim/ee/Bhabha/1530/CMD-theta-20-2.dat";
+//	sim_mask="/store/sim/ee/Bhabha/1548/CMD-theta-20.dat";
+//	sim_mask="/store/sim/ee/Bhabha/1548/theta-10-170-Real-35.dat";
+//	sim_mask="/store/sim/ee/Bhabha/1548/theta-15-165-m1cmZ.dat";	//Lt=700 nb^-1; N=20000(1000000)
+//	sim_mask="/store/sim/ee/Bhabha/1548/theta-15-165-IPzero-10.dat";
+//	sim_mask="/space/skim/psi3770/sim/sim010201.dat";
+//	sim_list={5461-5641};
+
+//	sim_mask="/store/sim/ee/Bhabha/1843/bhwide2006_1843_th13-167_csilightcol.dat";	//Lt=291.033 nb^-1; N=400000
+//	sim_mask="/store/sim/ee/Bhabha/1843/theta-20.dat";	//Lt=1870.52 nb^-1; N=1000000
+//	sim_mask="/store/sim/ee/Bhabha/1843/theta-12.5.dat";	//Lt=200.703 nb^-1; N=300000
+//	sim_list={7806-7916,8208-8371,8872-9075};
+	sim_list={7806-7916};
+//	sim_mask="/home/todyshev/KEDR/stable/KedrSim/simout/sim010501.dat";		//~todyshev/KEDR/stable/KedrSim/SimEE10501.sh.o231148
+	sim_mask="/home/todyshev/KEDR/stable/KedrSim/simout/sim011401.dat";		//~todyshev/KEDR/stable/KedrSim/SimEE11401.sh.o229745
+	sim_events=0,10000,800000;
+}

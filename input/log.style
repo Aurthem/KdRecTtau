@@ -1,0 +1,261 @@
+/*/Style sheet for visualizer
+C++ style comments and all whitespaces are ignored (you can disfigure names with them, if you want).
+Fields: '[name]=[string];', '[name]="[string]";'
+Duplicate blocks are supported. From duplicate entries only first one stays.
+For color fields, you can use root-5.14 color constants and arithmetic operations, or hex values.
+/*/
+global {	//global options to avoid bloating
+	header{
+		body=0.02,0.88,0.98,0.98,"br";
+		fill_color=19;
+		font=32;
+		color=49;
+		align=22;
+	}
+	style{
+		opt_fit=1111;
+	}
+	histograms{
+		nbins=100;
+		draw_options="";
+	}
+	profiles{
+		draw_options="";
+	}
+}
+
+log_angles_div{	//block name is canvas name
+	canvas{
+		title="Energy resolution - canvas";
+		position=100,100;
+		size=800,900;
+	}
+	header{
+		lines="Bhabha scattering resolution","run_list placeholder";
+	}
+	pad{
+		title="Energy resolution - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		LKr_coll_sim{
+			position=1,1;
+			data=sim:"cluster_rel_angles.h.coll1";
+			range=0.,12.;
+			fill_color=0;
+			line_color=38;
+			title="LKr Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		LKr_coll_exp{
+			position=1,1;
+			data=exp:"cluster_rel_angles.h.coll1";
+			range=0.,12.;
+			fill_color=0;
+			line_color=30;
+			title="LKr Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		CsI_coll_sim{
+			position=1,2;
+			data=sim:"cluster_rel_angles.h.coll2";
+			range=0.,12.;
+			fill_color=0;
+			line_color=#fa5509;
+			title="CsI Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+		CsI_coll_exp{
+			position=1,2;
+			data=exp:"cluster_rel_angles.h.coll2";
+			range=0.,12.;
+			fill_color=0;
+			line_color=#42cc99;
+			title="CsI Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+		LKr_theta_sim{
+			position=2,1;
+			data=sim:"cluster_rel_angles.h.theta1";
+			range=0.,12.;
+			fill_color=0;
+			line_color=38;
+			title="LKr Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		LKr_theta_exp{
+			position=2,1;
+			data=exp:"cluster_rel_angles.h.theta1";
+			range=0.,12.;
+			fill_color=0;
+			line_color=30;
+			title="LKr Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		CsI_theta_sim{
+			position=2,2;
+			data=sim:"cluster_rel_angles.h.theta2";
+			range=0.,12.;
+			fill_color=0;
+			line_color=#fa5509;
+			title="CsI Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+		CsI_theta_exp{
+			position=2,2;
+			data=exp:"cluster_rel_angles.h.theta2";
+			range=0.,12.;
+			fill_color=0;
+			line_color=#42cc99;
+			title="CsI Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+		LKr_phi_sim{
+			position=3,1;
+			data=sim:"cluster_rel_angles.h.phi1";
+			range=0.,15.;
+			fill_color=0;
+			line_color=38;
+			title="LKr Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		LKr_phi_exp{
+			position=3,1;
+			data=exp:"cluster_rel_angles.h.phi1";
+			range=0.,15.;
+			fill_color=0;
+			line_color=30;
+			title="LKr Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		CsI_phi_sim{
+			position=3,2;
+			data=sim:"cluster_rel_angles.h.phi2";
+			range=0.,15.;
+			fill_color=0;
+			line_color=#fa5509;
+			title="CsI Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+		CsI_phi_exp{
+			position=3,2;
+			data=exp:"cluster_rel_angles.h.phi2";
+			range=0.,15.;
+			fill_color=0;
+			line_color=#42cc99;
+			title="CsI Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+	}
+	profiles{
+	}
+}
+
+log_energy_div{	//block name is canvas name
+	canvas{
+		title="Energy resolution - canvas";
+		position=100,100;
+		size=800,600;
+	}
+	header{
+		lines="Bhabha scattering resolution","run_list placeholder";
+	}
+	pad{
+		title="Energy resolution - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		LKr_sim{
+			position=1,1;
+			data=sim:"cluster_energy.h.energy1";
+			range=1000.,2300.;
+			fill_color=0;
+			line_color=38;
+			title="LKr Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		LKr_exp{
+			position=1,1;
+			data=exp:"cluster_energy.h.energy1";
+			range=1000.,2300.;
+			fill_color=0;
+			line_color=30;
+			title="LKr Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";	//"agauss"
+		}
+		CsI_sim{
+			position=1,2;
+			data=sim:"cluster_energy.h.energy2";
+			range=1000.,2300.;
+			fill_color=0;
+			line_color=#fa5509;
+			title="CsI Energy sim";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+		CsI_exp{
+			position=1,2;
+			data=exp:"cluster_energy.h.energy2";
+			range=1000.,2300.;
+			fill_color=0;
+			line_color=#42cc99;
+			title="CsI Energy exp";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";
+		//	fit="gauslog";
+		}
+	}
+	profiles{
+	}
+}

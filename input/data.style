@@ -1,0 +1,602 @@
+/*/Style sheet for visualizer
+C++ style comments and all whitespaces are ignored (you can disfigure names with them, if you want).
+Fields: '[name]=[string];', '[name]="[string]";'
+Duplicate blocks are supported. From duplicate entries only first one stays.
+For color fields, you can use root-5.14 color constants and arithmetic operations, or hex values.
+/*/
+global {	//global options to avoid bloating
+	header{
+		body=0.02,0.88,0.98,0.98,"br";
+		fill_color=19;
+		font=32;
+		color=49;
+		align=22;
+	}
+	style{
+		opt_fit=1111;
+	}
+	histograms{
+		nbins=100;
+		draw_options="";
+	}
+	profiles{
+		draw_options="";
+	}
+}
+
+cluster_energy{	//block name is canvas name
+	canvas{
+		title="Energy resolution - canvas";
+		position=100,100;
+		size=800,600;
+	}
+	header{
+		lines="Bhabha scattering resolution","run_list placeholder";
+	}
+	pad{
+		title="Energy resolution - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		energy1{
+			position=1,1;
+			data="all_bhabha::LKr.high.cluster_energy","all_bhabha::LKr.low.cluster_energy";
+			range=1000.,2300.;
+			fill_color=30;
+			title="LKr Energy";
+			xtitle="Energy";
+			xunit="MeV";
+			fit="gauslog";	//"agauss"
+		}
+		energy2{
+			position=1,2;
+			data="all_bhabha::CsI.high.cluster_energy","all_bhabha::CsI.low.cluster_energy";
+			range=1000.,2300.;
+			fill_color=38;
+			title="CsI Energy";
+			xtitle="Energy";
+			xunit="MeV";
+			fit="gauslog";
+		}
+		angle1{
+			position=2,1;
+			data="all_bhabha::LKr.high.theta","all_bhabha::LKr.low.theta";
+			range=20.,160.;
+			fill_color=#42cc99;
+			title="LKr Angle";
+			xtitle="#theta";
+			xunit="deg";
+			fit="bb_xsect";
+		}
+		angle2{
+			position=2,2;
+			data="all_bhabha::CsI.high.theta","all_bhabha::CsI.low.theta",
+				"all_bhabha::LKr.high.theta","all_bhabha::LKr.low.theta";
+			range=0.,180.;
+			fill_color=#fa5509;
+			title="CsI+LKr Angle";
+			xtitle="#theta";
+			xunit="deg";
+			fit="bb_xsect";
+		}
+	}
+	profiles{
+	}
+}
+cluster_tracks{
+	canvas{
+		title="Energy resolution tracks - canvas";
+		position=100,100;
+		size=800,600;
+	}
+	header{
+		lines="Bhabha scattering resolution","run_list placeholder";
+	}
+	pad{
+		title="Energy resolution tracks - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		lkr_high{
+			position=1,1;
+			data="all_bhabha::LKr.high.track_momentum";
+			range=0.,3700.;
+			fill_color=30;
+			title="LKr high momentum";
+			xtitle="Momentum";
+			xunit="MeV";
+			fit="gauslog";
+		}
+		lkr_low{
+			position=2,1;
+			data="all_bhabha::LKr.low.track_momentum";
+			range=0.,3700.;
+			fill_color=38;
+			title="LKr low momentum";
+			xtitle="Momentum";
+			xunit="MeV";
+			fit="gauslog";
+		}
+		csi_high{
+			position=1,2;
+			data="all_bhabha::CsI.high.track_momentum";
+			range=0.,5000.;
+			fill_color=#42cc99;
+			title="CsI high momentum";
+			xtitle="Momentum";
+			xunit="MeV";
+			fit="gauslog";
+		}
+		csi_low{
+			position=2,2;
+			data="all_bhabha::CsI.low.track_momentum";
+			range=0.,5000.;
+			fill_color=#fa5509;
+			title="CsI low momentum";
+			xtitle="Momentum";
+			xunit="MeV";
+			fit="gauslog";
+		}
+	}
+}
+cluster_rel_angles{	//block name is canvas name
+	header{
+		fill_color=#F2BD68;
+	}
+	canvas{
+		title="Relative angles - canvas";
+		position=100,100;
+		size=800,900;
+	}
+	header{
+		lines="Bhabha scattering angles","run_list placeholder";
+	}
+	pad{
+		title="Relative angles - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		coll1{
+			position=1,1;
+			data="all_bhabha::LKr.rel_angle";
+			range=0.,12.;
+			fill_color=#007D08;
+			title="LKr Collinearity Angle";
+			xtitle="#alpha";
+			xunit="deg";
+			fit="gauslog";
+		}
+		theta1{
+			position=2,1;
+			data="all_bhabha::LKr.rel_theta";
+			range=0.,12.;
+			fill_color=#009E0B;
+			title="LKr #theta angle";
+			xtitle="#theta";
+			xunit="deg";
+			fit="gauslog";
+		}
+		phi1{
+			position=3,1;
+			data="all_bhabha::LKr.rel_phi";
+			range=0.,15.;
+			fill_color=#00CC0E;
+			title="LKr #phi angle";
+			xtitle="#phi";
+			xunit="deg";
+			fit="gauslog";
+		}
+		coll2{
+			position=1,2;
+			data="all_bhabha::CsI.rel_angle";
+			range=0.,12.;
+			fill_color=#003878;
+			title="CsI Collinearity Angle";
+			xtitle="#alpha";
+			xunit="deg";
+			fit="gauslog";
+		}
+		theta2{
+			position=2,2;
+			data="all_bhabha::CsI.rel_theta";
+			range=0.,12.;
+			fill_color=#004FA8;
+			title="CsI #theta angle";
+			xtitle="#theta";
+			xunit="deg";
+			fit="gauslog";
+		}
+		phi2{
+			position=3,2;
+			data="all_bhabha::CsI.rel_phi";
+			range=0.,15.;
+			fill_color=#0064D6;
+			title="CsI #phi angle";
+			xtitle="#phi";
+			xunit="deg";
+			fit="gauslog";
+		}
+	}
+	profiles{
+	}
+
+}
+cluster_updown{	//block name is canvas name
+	canvas{
+		title="CsI up_down clusters - canvas";
+		position=100,100;
+		size=800,450;
+	}
+	header{
+		lines="CsI up_down clusters resolution","run_list placeholder";
+	}
+	pad{
+		title="CsI up_down clusters - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		up_cluster{
+			position=1,1;
+			data="all_bhabha::CsI.high.up_cluster","all_bhabha::CsI.low.up_cluster";
+			range=1000.,2300.;
+			fill_color=0;
+		//	marker_color=30;
+			line_color=30;
+		//	marker_style=2;
+			title="CsI_up Energy";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";//,"err";
+			fit="gauslog";	//"agauss"
+		}
+		down_cluster{
+			position=1,1;
+			data="all_bhabha::CsI.high.down_cluster","all_bhabha::CsI.low.down_cluster";
+			range=1000.,2300.;
+			fill_color=0;
+		//	marker_color=38;
+			line_color=38;
+		//	marker_style=3;
+			title="CsI_down Energy";
+			xtitle="Energy";
+			xunit="MeV";
+			special="norm";//,"err";
+			fit="gauslog";
+		}
+	}
+	profiles{
+	}
+}
+
+sph_hits{
+	canvas{
+		title="Sph hits - canvas";
+		position=100,100;
+		size=800,600;
+	}
+	header{
+		lines="Bhabha scattering mu hits","run_list placeholder";
+	}
+	pad{
+		title="Sph hits - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		nbins=35;
+		lkr_ntr{
+			position=1,1;
+			data="all_bhabha::LKr.ntracks";
+			range=-1.,3.;
+			fill_color=#007D08;
+			title="LKr track number";
+			xtitle="Tracks";
+			xunit="";
+		}
+		csi_ntr{
+			position=1,2;
+			data="all_bhabha::CsI.ntracks";
+			range=-1.,3.;
+			fill_color=#009E0B;
+			title="CsI track number";
+			xtitle="Tracks";
+			xunit="";
+		}
+		vd_hits{
+			position=2,1;
+			data="all_bhabha::hit_type";
+			range=9.,34.;
+			fill_color=#729E9E;
+			title="Mu hit type";
+			xtitle="Type";
+			xunit="";
+		//	fit="gauslog";
+		}
+		lkr_sphericity{
+			position=2,2;
+			data="all_bhabha::vddc.LKr.sphericity";
+			range=0,0.01;
+			fill_color=#003878;
+			title="LKr sphericity";
+			xtitle="Sphericity";
+			xunit="";
+			special="logy";
+			fit="gauslog";
+		}
+	}
+}
+
+theta_resolution{	//block name is canvas name
+	canvas{
+		title="Theta resolution - canvas";
+		position=100,100;
+		size=600,900;	//title, position, size
+	}
+	header{
+		lines="Bhabha scattering resolution","run_list placeholder";
+	}
+	style{
+		gridx=true;
+		gridy=true;
+		opt_stat=0;
+	}
+	pad{
+		title="Theta resolution - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	legend{
+		title="";	//no title
+		corners=0.35,0.6, 0.65,0.5;
+		option="br";
+		entries{
+			theta_LKr="LKr resolution","l";
+			theta_CsI="CsI resolution","l";
+		}
+	}
+	
+	profiles{
+		theta_LKr{	//both clusters are here
+			position=1,1;
+			data="all_bhabha::LKr.high.theta":"all_bhabha::LKr.high.cluster_energy",
+				"all_bhabha::LKr.low.theta":"all_bhabha::LKr.low.cluster_energy";
+			nbins=180;
+			xrange=0.,180.;
+			yrange=0.,2300.;
+			title="Theta resolution";
+			xtitle="#theta";
+			xunit="deg";
+			ytitle="Energy";
+			yunit="MeV";
+		}
+		theta_CsI{
+			position=1,1;
+			data="all_bhabha::CsI.high.theta":"all_bhabha::CsI.high.cluster_energy",
+				"all_bhabha::CsI.low.theta":"all_bhabha::CsI.low.cluster_energy";
+			nbins=180;
+			xrange=0.,180.;
+			yrange=0.,2300.;
+			title="Merged_theta resolution";
+			xtitle="#theta";
+			xunit="deg";
+			ytitle="Energy";
+			yunit="MeV";
+			marker_color=2;
+			line_color=2;
+		}
+		theta_high{
+			position=2,1;
+			data="all_bhabha::LKr.high.theta":"all_bhabha::LKr.high.cluster_energy",
+				"all_bhabha::CsI.high.theta":"all_bhabha::CsI.high.cluster_energy";
+			nbins=180;
+			xrange=0.,180.;
+			yrange=0.,2300.;
+			title="Merged_theta resolution";
+			xtitle="#theta";
+			xunit="deg";
+			ytitle="Energy";
+			yunit="MeV";
+			marker_color=kRed;
+			line_color=kRed;
+		}
+		theta_low{
+			position=2,1;
+			data="all_bhabha::LKr.low.theta":"all_bhabha::LKr.low.cluster_energy",
+				"all_bhabha::CsI.low.theta":"all_bhabha::CsI.low.cluster_energy";
+			nbins=180;
+			xrange=0.,180.;
+			yrange=0.,2300.;
+			title="Merged_theta resolution";
+			xtitle="#theta";
+			xunit="deg";
+			ytitle="Energy";
+			yunit="MeV";
+			marker_color=kBlue;
+			line_color=kBlue;
+		}
+	}
+}
+
+inv_diff{	//block name is canvas name
+	canvas{
+		title="Ediff and Minv - canvas";
+		position=100,100;
+		size=800,600;	//title, position, size
+	}
+	header{
+		lines="Energy difference and invariant mass of two most energetic clusters","run_list placeholder";
+	}
+	pad{
+		title="Ediff and Minv - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		ediff1{
+			position=1,1;
+			data="all_bhabha::LKr.energy_diff";
+			range=0.,500.;
+			fill_color=30;
+			title="LKr Energy diff";
+			xtitle="Energy";
+			xunit="MeV";
+		}
+		ediff2{
+			position=1,2;
+			data="all_bhabha::CsI.energy_diff";
+			range=0.,500.;
+			fill_color=38;
+			title="CsI Energy diff";
+			xtitle="Energy";
+			xunit="MeV";
+		}
+		invmass1{
+			position=2,1;
+			data="all_bhabha::LKr.invMass";
+			range=1900.,4600.;
+			fill_color=3;
+			title="LKr inv mass";
+			xtitle="M_{ee}";
+			xunit="MeV";
+			fit="gauslog";
+		}
+		invmass2{
+			position=2,2;
+			data="all_bhabha::CsI.invMass";
+			range=1900.,4600.;
+			fill_color=7;
+			title="CsI inv mass";
+			xtitle="M_{ee}";
+			xunit="MeV";
+			fit="gauslog";
+		}
+	}
+}
+
+tof_times{
+	canvas{
+		title="ToF times - canvas";
+		position=100,100;
+		size=800,300;
+	}
+	header{
+		lines="Bhabha scattering ToF times","run_list placeholder";
+	}
+	pad{
+		title="ToF times - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+	//	nbins=100;
+		barrel_track{
+			position=1,1;
+			data="all_bhabha::tof.barrel.track";
+			range=-10.,100.;
+			fill_color=#A84B2F;
+			title="ToF from tracks";
+			xtitle="Time";
+			xunit="ns";
+			fit="gauslog";
+		}
+		barrel_emc{
+			position=1,2;
+			data="all_bhabha::tof.barrel.emc";
+			range=-10.,100.;
+			fill_color=#729E9E;
+			title="ToF from calorimeter data";
+			xtitle="Time";
+			xunit="ns";
+			fit="gauslog";
+		}
+		endcap_emc{
+			position=1,3;
+			data="all_bhabha::tof.endcap.emc";
+			range=-10.,100.;
+			fill_color=#69C26C;
+			title="ToF from calorimeter data, endcap";
+			xtitle="Time";
+			xunit="ns";
+			fit="gauslog";
+		}
+	}
+}
+
+track_data{
+	canvas{
+		title="Track data - canvas";
+		position=100,100;
+		size=800,900;
+	}
+	header{
+		lines="Bhabha scattering track data","run_list placeholder";
+	}
+	pad{
+		title="Track data - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		momentum_high{
+			position=1,1;
+			data="all_bhabha::LKr.high.track_momentum","all_bhabha::CsI.high.track_momentum";
+			range=0.,5000.;
+			fill_color=#A84B2F;
+			title="High track energy";
+			xtitle="Energy";
+			xunit="MeV";
+			fit="gauslog";	//"agauss"
+		}
+		momentum_low{
+			position=2,1;
+			data="all_bhabha::LKr.low.track_momentum","all_bhabha::CsI.low.track_momentum";
+			range=0.,4000.;
+			fill_color=#2F64A8;
+			title="Low track energy";
+			xtitle="Energy";
+			xunit="MeV";
+			fit="gauslog";
+		}
+		track_theta{
+			position=1,2;
+			data="all_bhabha::vddc.track.high.theta","all_bhabha::vddc.track.low.theta";
+			range=0.,180.;
+			fill_color=#BF4A34;
+			title="Original track #theta";
+			xtitle="#theta";
+			xunit="deg";
+			fit="gauslog";
+		}
+		track_phi{
+			position=2,2;
+			data="all_bhabha::vddc.track.high.phi","all_bhabha::vddc.track.low.phi";
+			range=-180.,180.;
+			fill_color=#4E76BA;
+			title="Original track #phi";
+			xtitle="#phi";
+			xunit="deg";
+			fit="gauslog";
+		}
+	}
+}

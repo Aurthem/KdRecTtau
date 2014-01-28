@@ -1,0 +1,41 @@
+Let me assume that you have created several
+histograms TH1 *h1,*h2,*h3, etc in the current directory.
+You can get a pointer to the list in memory with
+   TList *list = gDirectory->GetList();
+
+then write this list as one single key in a Root file with:
+  TFile f("junk.root","new");
+  list->Write("allhists",TObject::kSingleKey);
+
+To read the list again in memory, you can do
+  TFile f("junk.root");
+  TList *list = (TList*)f.Get("allhists");
+  list->ls();
+//--------------------------------------------//
+  
+{
+   TH1F *myhist;
+   TList * hlist= new TList();
+   char *histname = new char[10];
+   for (Int_t h=0; h<5; h++) {
+      sprintf(histname, "h_x_%d",h);
+      myhist = new TH1F(histname,"",100,-0.25,0.25);
+//     add it to the list
+       hlist->Add(myhist);
+        for (Int_t iii=0;iii<100; iii++) {
+        myhist ->SetBinContent(iii,iii*2);
+      }
+   }
+   TFile f("test.root", "RECREATE");
+//  write out as list
+   hlist->Write("myhists", TObject::kSingleKey);
+   f.Close();
+}
+ // to get them back	
+{
+   TFile f("test.root");
+   f.ls()
+   TList * hlist = (TList*)f.Get("myhists");
+   TH1 * h = (TH1 *)hlist->At(0);
+   h->Print()
+}

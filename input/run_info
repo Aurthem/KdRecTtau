@@ -1,0 +1,127 @@
+/*/	VEPP-4M runs (energy)
+kdb_version:
+	0 - NMR only;
+	1 - NMR + temperature of calibration magnet and wall temperature; (most precise one)
+	2 - temperature inside the magnet;
+	3 - distillate temperature instead of ring temperature;
+	4 - added temperatures of experimental gap tunnel;
+	7 - added NMR in magnets NEM, SEM.
+/*/
+
+run[3261-3518]{	kdb_version=0,1,2,3,4;
+	description="psi(3770) scan";
+}
+run[3519-3574]{	kdb_version=0,1,2,3,4;
+	description="psi(2S) scan";
+}
+run[3587-3843]{	kdb_version=0,1,3,4;
+	description="psi(3770) scan";
+}
+run[3844-3909]{	kdb_version=0,1,2,3,4;
+	description="psi(2S) scan";
+}
+run[3910-3951]{	kdb_version=0,1,2,3,4;
+	description="psi(3770) scan";
+}
+run[4024-4060]{	kdb_version=0,1,3,4;
+	description="1873";		//MeV
+}
+run[4079-4707]{	kdb_version=0,1,2,3,4;
+	description="psi(3770)";
+}
+run[4710-5054]{	kdb_version=0,1,2,3,4;
+	description="psi(2S) peak, base";
+}
+run[5191-5324]{	kdb_version=0,1,2,3,4;
+	description="tau 1792.5";
+}
+run[5349-5443]{	kdb_version=0,1,2,3,4;
+	description="tau 1772";
+}
+run[5450-5641]{	kdb_version=0,1,2,3;
+	description="J/psi scan";
+}
+run[5645-5857]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1777.5";
+}
+run[5864-6031]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1777.0";
+}
+run[6040-6187]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1776.5";
+}
+run[6633-6884]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1772";
+}
+run[6887-7005]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1782";
+}
+run[7006-7419]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1777";
+}
+run[7420-7580]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1776.5";
+}
+run[7589-7801]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1777.5";
+}
+run[7806-7916]{	kdb_version=0,1,2;
+	description="psi(2S) scan";
+}
+run[7920-7927]{	kdb_version=0,1,2;
+	description="3940";		//MeV
+}
+run[7928-8093]{	kdb_version=0,1,2;
+	description="psi(3770) scan";
+}
+run[8094-8207]{	kdb_version=0,1,2;
+	description="psi(3770) scan near X";	//?
+}
+run[8208-8371]{	kdb_version=0,1,2;
+	description="psi(2S) peak, base";
+}
+run[8373-8513]{	kdb_version=0,1,2;
+	description="psi(3770) scan";
+}
+run[8624-8779]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1782";
+}
+run[8789-8871]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1772.3";
+}
+run[8872-9075]{	kdb_version=1;
+	description="psi(2S) peak, base";
+}
+run[9079-9791]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1777";
+}
+run[9797-9903]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1792";
+}
+run[9904-10069]{	kdb_version=0,1,2,3,4,7;
+	description="tau 1777.5";
+}
+run[10072-10110]{	kdb_version=0,1,4,3,4,7;
+	description="tau 1770.8";
+}
+run[10160-10984]{	kdb_version=1;
+	description="psi(2S) peak, base";
+}
+run[10985-11208]{	kdb_version=0;
+	description="psi(2S) scan";
+}
+run[11223-12327]{	kdb_version=0;
+	description="J/psi peak, base";
+}
+run[12340-12421]{	kdb_version=0;
+	description="J/psi scan";
+}
+run[12422-12873]{	kdb_version=0;
+	description="";
+}
+run[12874-16180]{	kdb_version=1000;
+	description="R scan and resonanses";
+}
+run[16338-17029]{	kdb_version=0,1;
+	description="psi(2S) scan and peak, base";
+}

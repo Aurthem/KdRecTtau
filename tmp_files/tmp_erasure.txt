@@ -1,0 +1,97 @@
+class Any_Virtual{
+public:
+	Any_Virtual() : storage_(0) { }
+	Any_Virtual(Any_Virtual const& other) : storage_(other.storage_->clone()) { }
+	
+	template<class T>
+	Any_Virtual(T const& t) : storage_(new holder<T>(t)) { }
+	~Any_Virtual() { Clear(); }
+	Any_Virtual& operator=(Any_Virtual const& other) {
+		Clear();
+		storage_ = other.storage_->clone();
+		return *this;
+	}
+	template<class T>
+	Any_Virtual& operator=(T const& t) {
+		Clear();
+		storage_ = new holder<T>(t);
+		return *this;
+	}
+	void Clear() { if(storage_) delete storage_; }
+	template<class T>
+	T& As() { return static_cast<holder<T>*>(storage_)->held_; }
+private:
+	struct holder_base{
+		virtual ~holder_base(){}
+		virtual holder_base* clone() const = 0;
+	};
+	
+	template<class T>
+	struct holder : holder_base {
+		holder() : held_() { }
+		holder(T const& t) : held_(t) { }
+		virtual ~holder() { }
+		virtual holder_base* clone() const {
+			return new holder<T>(*this);
+		}
+		T held_;
+	};
+private:
+	holder_base* storage_;
+};
+
+
+//---------------------------------------
+struct Weapon { bool can_attack() const { return true; } };
+struct Armor { bool can_attack() const { return false; } };
+struct Helmet { bool can_attack() const { return false; } };
+struct Scroll { bool can_attack() const { return false; } };
+struct FireScroll { bool can_attack() const { return true; } };
+struct Potion { bool can_attack() const { return false; } };
+struct PoisonPotion { bool can_attack() const { return true; } };
+
+class Object {
+public:
+	template< typename T > Object( const T& obj ) : object( new ObjectModel<T>( obj ) ) { }
+	std::string name() const { return object->name(); }
+	bool has_attack_concept() const { return object->has_attack_concept(); }
+private:
+	struct ObjectConcept{
+		virtual ~ObjectConcept() { }
+		virtual bool has_attack_concept() const = 0;
+		virtual std::string name() const = 0;
+	};
+	template<typename T> struct ObjectModel : ObjectConcept {
+	public:
+		ObjectModel( const T& t ) : object( t ) { }
+		virtual ~ObjectModel() { }
+		virtual bool has_attack_concept() const {
+			return object.can_attack();
+		}
+		virtual std::string name() const {
+			return typeid( object ).name;
+		}
+	private:
+		T object;
+	};
+	boost::shared_ptr<ObjectConcept> object;
+};
+
+int main() {
+	typedef std::vector< Object > Backpack;
+	typedef Backpack::const_iterator BackpackIter;
+	
+	Backpack backpack;
+	
+	backpack.push_back( Object( Weapon( SWORD ) ) );
+	backpack.push_back( Object( Armor( CHAIN_MAIL ) ) );
+	backpack.push_back( Object( Potion( HEALING ) ) );
+	backpack.push_back( Object( Scroll( SLEEP ) ) );
+	backpack.push_back( Object( FireScroll() ) );
+	backpack.push_back( Object( PoisonPotion() ) );
+	
+	std::cout << "Items I can attack with:" << std::endl;
+	for( BackpackIter item = backpack.begin(); item != backpack.end(); ++item )
+		if( item->has_attack_concept() )
+			std::cout << item->name();
+}

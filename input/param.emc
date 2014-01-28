@@ -1,0 +1,319 @@
+//----------------------------------------------//
+//! Reconstruction parameters in electromagnetic calorimeter
+//! Notations:
+//!		lkr - LKr towers, str - strips, csi - CsI cristals, emc - lkr+csi
+//! Also see tips at the end of this file
+//----------------------------------------------//
+
+
+//----------------------------------------//
+//	::: Main reconstruction controls :::
+//----------------------------------------//
+
+emc_verbose=0; 	//! print on screen (description below)
+
+//! Source for run number to load channels' statuses (simulation)
+//! Values:
+//!		-> 0 - run number is taken from kglobalparam_.NSimRun
+//!			Used for loading status only if(sim4exp_bad != 0)
+//!			See VDDCRec/kglobparam.h
+//!		-> 1 - run number is taken from sim4exp_bad parameter
+//! Used in emc_run()
+//! See sim4exp_bad
+emc_master=0;
+
+read_lkr=1; 	//! read LKr entry, fill array[9600] with amplitudes
+read_csi=1; 	//! read CsI entry, fill array[1536] with amplitudes
+
+rec_lkr=1; 		//! search LKr(towers)	for clusters
+rec_csi=1; 		//! search CsI			for clusters
+rec_str=1; 		//! search LKr(strips)	for clusters
+rec_str_tracks=1; 	//! construct tracks from LKr(strips)
+
+attach_lkr2str=1; 	//! attach strip clusters to tower clusters (LKr only)
+attach_lkr2csi=1; 	//! attach LKr(tower) clusters and CsI clusters
+attach_lkr2dc=1; 	//! attach LKr(tower) clusters to DC tracks
+attach_csi2dc=1; 	//! attach CsI clusters to DC tracks
+dctrack_mode=2; 	//! method of pulling DC tracks into calorimeters (description below)
+
+fill_structure=1; 	//! fill C-structure from emc_system.h with reconstruction data (for fortran users)
+
+
+//----------------------------------------//
+//	::: Energy :::
+//----------------------------------------//
+
+//lkr_scale=1.057237,  1.0771;	//! energy multiplier for LKr (exp,sim)
+//csi_scale=0.95684, 1.0553;	//! energy multiplier for CsI (exp,sim)
+lkr_scale=1.0578, 1.0766;	//! energy multiplier for LKr (exp,sim)
+csi_scale=0.9879, 1.0265;	//! energy multiplier for CsI (exp,sim)
+
+//! account for non-linearity of rough and fine digitization channels
+//! (off/on),channel value multiplier(rough,fine),reference energy value(rough,fine),
+//! relative change in channel value(rough,fine),offset of zero(rough,fine)
+//lkr_rf_scale=0, 0.906,0.942, 1500.,200., -0.019,0.023, 0.,4.6;
+
+//! cosmic correction
+//! 1 - only towers; 2 - (1)+strips with assumption of shower strip-clusters;
+//! 3 - (1)+strips with identification of strip-clusters; 4 - (3)+reference run is accounted for
+lkr_scale_cosm = 4;		//! experimental scale is corrected with cosmic coefficient from DB (old_val=1)
+
+lkr_refrun=7916;	//! your last run (for lkr_scale_cosm = 4)
+
+//! cosmic correction for strips
+//! shower correction ([1]^[2]): reference value of tower correction, exponent to convert tower to strip correction, [reserved]
+//! MIP-clusters correction: absorption length in simulation, normalization coefficient, integration length for (towers,clusters)
+//! identification of strip-clusters: threshold of identification parameter MIP<shower, minimum energy of MIP-cluster, [reserved]
+//! this card should be enabled if you want to change parameters
+//lkr_str_corpar=0.91,0.51,0, 0.64,0.92, 0.24,0.86, 4.,8.,0;
+
+//! increase coupling of neighbour towers
+//! (on/off),coefficient to set average value,coupling coefficient,[reserved],[reserved]
+//lkr_sim_coupling = 0, 1.074, -0.025, 0, 0;
+lkr_sim_coupling = 1, 1.045, -0.0130, 0, 0;
+
+//! increase geometric factor
+//! (on/off),coefficient to set average value,relative value of effect at threshold,threshold of energy dissipation (MeV),[reserved]
+//lkr_sim_geofact  = 0, 0.997, 0.427, 4., 0;
+
+//! calibration spread
+//! spread of all pedestals from calibration to calibration (channels),
+//! spread of all conversion coefficients from calibration to calibration (%),
+//! spread of all conversion coefficients on events (%),multiplier to readout threshold,
+//! instability of readout threshold of Cio (converter of input/output) (channels)
+//!! vary these parameters 5-10, 2-5, ?, ?, 5-10
+lkr_sim_spreads = 3., 4., 0., 1., 0.;
+csi_sim_spreads = 7., 9., 0., 1., 0.;
+
+//! spread of ground due to induced voltage for 4 types of channels:
+//! (non-sensitive,sensitive) towers, (phi-,theta-)strips
+//lkr_sim_ground = 0., 0.5, 0.7, 0.7;
+lkr_sim_ground = 0., 0., 0., 0.;
+
+//! synchronous spread of pedestals
+//! (non-sensitive,sensitive) towers, (phi-,theta-)strips
+lkr_sim_ped_drift = 0., 0., 0., 0.;
+
+lkr_sim_radio = 0.6, 0.67, 0.35, 0.6, 0.;
+
+//! shape of noise distribution (towers, phi- & theta-strips: shape and 4 parameters)
+//! shape 1 (gaussian random number raised to a power):
+//!		exponential,its derivative with respect to strip/tower volume,common multiplier,[reserved]
+//lkr_sim_nshape = 1,1.06,0.,1.10,0., 1,1.20,0.,1.09,0., 1,1.20,0.,1.08,0.;		//! for simulation w/o noise
+//lkr_sim_nshape = 1,1.05,0.,1.02,0., 1,1.18,0, 0.98,0., 1,1.18,0.,1.00,0.;		//! for simulation with noise
+//! shape 2 (gaussian and exponential distribution):
+//!		portion of exponential distribution,its derivative with respect to strip/tower volume,multiplier for gaussian sigma,multiplier for exponential mean
+//lkr_sim_nshape = 2,0.73,0.,1.33,0.60, 2,0.75,0.,1.23,0.83, 2,0.75,0.,1.22,0.81;		//! for simulation w/o noise
+//lkr_sim_nshape = 2,0.54,0.,1.09,0.59, 2,0.60,0.,1.04,0.77, 2,0.71,0.,1.14,0.73;	//! for simulation with noise
+
+//! mix noise into simulation (>1 - simulate radioactivity in strips)
+lkr_simnoise=2; 	//! mix noise into simulation (simulation should be done w/o noise) (old_val=1)
+csi_simnoise=1; 	//! mix noise into simulation (simulation should be done w/o noise) (old_val=1)
+//! channel noise (MeV), threshold value (in noise sigmas) for imitation of overloaded reading
+csi_noisepars=0.2,3.0;
+
+//! usage mode for experimental channel statuses during processing of simulation
+//! 	-> 0 - simulation is processed with ideal calorimeter state
+//! 	-> (!0) - value is used as run number, from which channel statuses should be taken
+//! if(emc_master==0 && sim4exp_bad!=0) run number is taken from outside to load statuses
+//! (it's used in emc_run(), see emc_master)
+sim4exp_bad=1;	//! use real channel status in simulation
+
+//! take real noise from: 0 - file, 1 - database, 2 - non-gaussian noise from database
+//sim4exp_lkr_noise=2;	//! active only if(sim4exp_bad != 0)
+//! load channel statuses
+//sim4exp_lkr_status=1;	//! active only if(sim4exp_bad != 0)
+
+csi_bad_channels = 1;	//! account for bad channels: 0 - don't, 1 - use mev2ch, 2 - read from database
+//csi_bad_channels=0; //disables csi, apparently
+
+//! 1 - consider ringing channels (kRING) as broken (kBROKEN)
+//! 2 - consider strongly ringing channels (kRING2) as broken (kBROKEN), 3=(1)+(2)
+lkr_bad_mode = 2;
+csi_bad_mode = 2;
+
+csi_mev2ch_tid = 1520;	//!table number for MeV/channel coefficient (if 0, take from file below)
+csi_mev2ch_fname =/space/users/pospelov/csicalib2/5477-5579_1/csimev2ch.txt;	//! filename
+
+lkr_mev2ch_tid = 1657,2;	//! table number for mev2ch and its version
+
+
+//----------------------------------------//
+//	::: Channels' state :::
+//----------------------------------------//
+
+lkr_qlty_method = 2;	//! method of getting statuses: 1 - standard, 2 - new
+
+//lkr_calibsts_ver = 101;		//! version of table of channel statuses from calibration
+//lkr_monitorsts_ver = 101;		//! version of table of channel statuses from run monitor
+
+lkr_qlty_tid = 1601;	//! number of lkrqlty table
+lkr_qlty_ver = 102, 100, 2, 0, -1, -1, -1, -1;	//! array of lkrqlty table versions
+lkr_qlty_maxage = 10 days;	//! maximum age of calibration record of channel quality
+
+csi_qlty_tid = 1523;	//! number of csieqlty table
+csi_qlty_ver = 101, -1, -1, -1, -1, -1, -1, -1;	//! array of csieqlty table versions
+//csi_qlty_ver = 102, 100, 2, 0, -1, -1, -1, -1;
+csi_qlty_maxage = 10 days;	//! maximum age of calibration record of channel quality
+
+
+//----------------------------------------//
+//	::: Building :::
+//----------------------------------------//
+
+//! cluster search in LKr towers:
+lkr_cell_ecut=1.5, 1.5,10.0;	//! energy thresholds (MeV) for cell inclusion into cluster (cell,near,seed)
+lkr_cell_rcut=2.5, 3.0, 5.0;	//! signal/noise thresholds for cell inclusion into cluster (cell,near,seed)
+lkr_cluster_ecut=20.;			//! cluster energy threshold (MeV)
+lkr_cluster_ncells=2;			//! lower bound of cell number in cluster (should be not less than the value)
+lkr_merge=3;					//! 1 - merge boundary, 2 - merge through bad cell, 3 - (1)+(2)
+lkr_wincut=0;					//! size of window, limiting cluster extension (0 - off)
+
+//! cluster search in CsI:
+csi_cell_ecut=1.0, 1.5,10.0;	//! energy thresholds (MeV) for cell inclusion into cluster (cell,near,seed)
+csi_cluster_ecut=20.;			//! cluster energy threshold (MeV)
+csi_cluster_ncells=2;			//! lower bound of cell number in cluster (should be not less than the value)
+csi_merge=3;					//! 1 - merge boundary, 2 - merge through bad cell, 3 - (1)+(2)
+csi_wincut=0;					//! size of window, limiting cluster extension (0 - off)
+
+//! partners (neighbour clusters):
+emc_merge_partners=0;			//! 1 - merge partners in LKr and CsI (default), 0 - don't merge
+//emc_merge_partners=1;
+
+//! cluster search in LKr strips:
+str_cell_ecut=0.0, 0.5, 4.0;	//! energy thresholds (MeV) for cell inclusion into cluster (cell,near,seed)
+str_cell_rcut=1.0, 2.0, 3.0;	//! signal/noise thresholds for cell inclusion into cluster (cell,near,seed)
+str_cluster_ecut=5.0;			//! cluster energy threshold (MeV)
+str_cluster_ncells=2;			//! lower bound of cell number in cluster (should be not less than the value)
+str_merge=0;					//! 1 - merge boundary, 2 - merge through bad cell, 3 - (1)+(2)
+str_wincut=0;					//! size of window, limiting cluster extension (0 - off)
+str_distmaxcells=5;				//! threshold distance between maximum cells of neighbour clusters (if less, merge)
+
+//! build tracks from strips:
+str_tracks_merge=0;			//! merge short tracks into long ones (cosmic)
+str_tracks_angle=20.;		//! merge threshold for angle between tracks
+str_tracks_distance=20.;	//! threshold for distance between (x0,y0,z0) of two tracks
+
+
+//----------------------------------------//
+//	::: Merging one with another :::
+//----------------------------------------//
+
+//! attach strips to tower-clusters:
+lkr2str_theta=2.0, 5.0, 20.0;	//! theta thresholds (nsig,ths_min,ths_max)	(desc. below)
+lkr2str_phi=2.0, 5.0, 20.0;		//! phi thresholds (nsig,ths_min,ths_max)	(desc. below)
+lkr2str_zphi=10.0, 2.5;			//! phi thresholds for z-strips (juncture)
+
+//! attach LKr tower-clusters to DC tracks:
+lkr2dc_theta=5.0, 10.0, 20.0;	//! theta thresholds (nsig,ths_min,ths_max)	(desc. below)
+lkr2dc_phi=5.0, 10.0, 20.0;		//! phi thresholds (nsig,ths_min,ths_max)	(desc. below)
+
+//! attach LKr tower-clusters to CsI clusters:
+lkr2csi_theta=5.0, 15.0, 20.0;	//! theta thresholds (nsig,ths_min,ths_max)	(desc. below)
+lkr2csi_phi=5.0, 15.0, 20.0;	//! phi thresholds (nsig,ths_min,ths_max)	(desc. below)
+
+//! attach CsI clusters to DC tracks:
+csi2dc_theta=3.0, 10.0, 15.0;	//! theta thresholds (nsig,ths_min,ths_max)	(desc. below)
+csi2dc_phi=3.0, 10.0, 15.0;		//! phi thresholds (nsig,ths_min,ths_max)	(desc. below)
+
+
+//----------------------------------------//
+//	::: Miscellaneous :::
+//----------------------------------------//
+
+//! Shift LKr to DC coordinate system:
+//! 0 - no shift
+//! 1 - transform parameters are taken (temporarily doesn't work)
+//!		for experimental runs - from database
+//!		for simulation - from simulation data file (i.e. from cards)
+//! 2 - transform parameters are given manually in param.emc file
+//lkrshift=0;
+lkrshift=1;
+
+//! Shift CsI to DC coordinate system
+//! 0 - no shift
+//! 1 - transform parameters are taken (temporarily doesn't work)
+//!		for experimental runs - from database
+//!		for simulation - from simulation data file (i.e. from cards)
+//! 2 - transform parameters are given manually in param.emc file
+csishift=1;
+
+//! file with shifts of LKr and CsI with reference to DC
+//emcshift_fname=/space/KEDR/stable/KEmcData/emcshift.txt;
+//! file with CsI shifts relative to LKr
+//emcshift_fname=/space/KEDR/stable/KEmcData/emcshift_loc3.txt;
+
+//! manual parameters of LKr shift and rotation (active if lkrshift=2)
+lkr.shiftpar=-0.841,-0.440,-1.246;		//! LKr shift (X, Y, Z)
+lkr.rotpar=0.0, 0.0,-0.489;				//! LKr rotation (Theta, Gamma, Phi)
+
+//! manual parameters of CsI shift and rotation (active if csishift=2)
+csi[1].shiftpar=-1.007, 0.037,-0.806;	//! CsI1 module shift (X, Y, Z)
+csi[2].shiftpar=-1.305, 0.044,-0.663;	//! CsI2 module shift (X, Y, Z)
+csi[3].shiftpar=-0.036,-0.248,-0.853;	//! CsI3 module shift (X, Y, Z)
+csi[4].shiftpar= 0.543,-0.004,-0.745;	//! CsI4 module shift (X, Y, Z)
+csi[5].shiftpar=-1.277,-0.056, 0.580;	//! CsI5 module shift (X, Y, Z)
+csi[6].shiftpar=-1.305,-0.055, 0.321;	//! CsI6 module shift (X, Y, Z)
+csi[7].shiftpar=-0.088,-0.331, 0.698;	//! CsI7 module shift (X, Y, Z)
+csi[8].shiftpar= 0.781,-0.255, 0.726;	//! CsI8 module shift (X, Y, Z)
+csi[1].rotpar=0.0, 0.0, 0.992;	//! CsI1 module rotation (Theta, Gamma, Phi)
+csi[2].rotpar=0.0, 0.0, 0.890;	//! CsI2 module rotation (Theta, Gamma, Phi)
+csi[3].rotpar=0.0, 0.0, 0.540;	//! CsI3 module rotation (Theta, Gamma, Phi)
+csi[4].rotpar=0.0, 0.0,-0.502;	//! CsI4 module rotation (Theta, Gamma, Phi)
+csi[5].rotpar=0.0, 0.0, 1.289;	//! CsI5 module rotation (Theta, Gamma, Phi)
+csi[6].rotpar=0.0, 0.0, 1.200;	//! CsI6 module rotation (Theta, Gamma, Phi)
+csi[7].rotpar=0.0, 0.0, 0.075;	//! CsI7 module rotation (Theta, Gamma, Phi)
+csi[8].rotpar=0.0, 0.0,-0.427;	//! CsI8 module rotation (Theta, Gamma, Phi)
+
+//! service parameters:
+emc_debug=0;	//! print
+emc_debug_field=1,1,0,0,0;	//! lkr, csi, str, str_track, dc_track
+emc_param_id=5;				//! user stimulator
+//emc_stralt=0;				//! use alternative calculation of strip-cluster coordinates
+emc_stralt=1;
+
+
+//----------------------------------------//
+//	::: Tips :::
+//----------------------------------------//
+//! - comment or delete lines to use default values
+//! - line order is not fixed
+//! - if, for example, LKr reading is turned off (read_lkr=0), corresponding reconstruction is turned off automatically,
+//!		(i.e. it's not necessary to do rec_lkr=0, rec_str=0, etc.)
+//! - important: in cards with filenames there should be no space between '=' and the path
+//!		(i.e. emcshift_fname=/home/pospelov/KEDR/KEmcData/emcshift_loc.txt;)
+//----------------------------------------//
+//! #emc_verbose: 0 - no print, 1 - essentials, 2 - +non-critical warnings, 10 - everything
+//! #emc_debug: if(>0) at the end of reconstruction function emc_debug(value) is called, where
+//!		1 - print lists of clusters
+//!		2 - for cluster print nubers of attached tracks and clusters, lists of bad cells
+//!		3 - print lists of cells in a cluster
+//! #emc_debug_field=[lkr],[csi],[str],[str_track],[dc_track]: allows to control printing
+//!		i.e. emc_debug_field=1,0,0,0,0; will allow to print information of only LKr tower-clusters
+//!		works when emc_debug>0
+//----------------------------------------//
+//! #attach_lkr2str:
+//! strip-cluster is attached to tower-cluster
+//! if[ fabs(lkr_theta-str_theta)<THS_THETA && fabs(lkr_phi-str_phi)<THS_PHI ]
+//!   here THS_THETA (deg) is calculated from card #lkr2str_theta=[nsig],[ths_min],[ths_max];
+//!		if(THS_THETA<ths_min) THS_THETA=ths_min; else if(THS_THETA>ths_max) THS_THETA=ths_max;
+//!		else THS_THETA=nsig*dtheta;
+//!			where dtheta is the size of tower-cluster in degrees
+//!   THS_PHI is calculated in the same way
+//! #attach_lkr2csi:
+//! LKr tower-cluster is attached to CsI cluster
+//! if[ fabs(lkr_theta-csi_theta)<THS_THETA && fabs(lkr_phi-csi_phi)<THS_PHI ]
+//!   here THS_THETA (deg) is calculated from card #lkr2csi_theta=[nsig],[ths_min],[ths_max];
+//!		if(THS_THETA<ths_min) THS_THETA=ths_min; else if(THS_THETA>ths_max) THS_THETA=ths_max;
+//!		else THS_THETA=nsig*(lkr_dtheta+csi_dtheta)/2.;
+//!			where lkr_dtheta and csi_dtheta are cluster sizes
+//!   THS_PHI is calculated in the same way
+//----------------------------------------//
+//! #dctrack_mode=[0/1];
+//! when attaching DC tracks to calorimeter clusters we need to consider how tracks are extended
+//! to the intersection with cluster radius: one way or both ways?
+//!		if([0]) track is extended both ways if(tVertex=0) and one way if(tVertex=1)
+//!		if([1]) track is extended both ways if(tVertex=0 && tPh1<[tPh0]<tPh2) and one way otherwise
+//!			here tVertex=0 means that track is not central, and track's tPh0 must be inside (tPh1,tPh2)
+//! [0] suits cosmic processing, while [1] is for central events
+//----------------------------------------//

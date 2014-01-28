@@ -1,0 +1,25 @@
+template<typename T>
+static inline std::ostream& operator<<(std::ostream& out, std::list<T> const& v)
+{
+	out << '[';
+	if (!v.empty()) {
+		for (typename std::list<T>::const_iterator i = v.begin(); ;) {
+			out << *i;
+			if (++i == v.end())
+				break;
+			out << ", ";
+		}
+	}
+	out << ']';
+	return out;
+}
+
+template<template <typename, typename> class Container, class V, class A>
+std::ostream& operator<<(std::ostream& out, Container<V, A> const& v)
+...
+
+To add maps to the mix, it would take a peek at reference to note that they accept 4 template params,
+so we'd need another version of the operator<< above with 4-arg template template param.
+We'd also see that std:pair tries to be rendered with 2-arg operator<< for sequence types we defined previously,
+so we would provide a specialization just for std::pair.
+

@@ -1,0 +1,286 @@
+/*/Style sheet for visualizer
+C++ style comments and all whitespaces are ignored (you can disfigure names with them, if you want).
+Fields: '[name]=[string];', '[name]="[string]";'
+Duplicate blocks are supported. From duplicate entries only first one stays.
+/*/
+global {	//global options to avoid bloating
+	header{
+		body=0.02,0.88,0.98,0.98,"br";
+		fill_color=19;
+		font=32;
+		color=49;
+		align=22;
+	}
+	style{
+		opt_fit=1111;
+	}
+	histograms{
+		nbins=200;
+		draw_options="";
+	}
+	profiles{
+		draw_options="";
+	}
+}
+
+run_info{	//block name is canvas name
+	canvas{
+		title="Run information - canvas";
+		position=100,100;
+		size=1200,900;	//title, position, size
+	}
+	header{
+		lines="Bhabha scattering run info","run_list placeholder";
+	}
+	pad{
+		title="Run information - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	
+	histograms{
+		int_lum{
+			position=1,1;
+			data="channels::int_luminosity";
+			range=1.,5000.;
+			fill_color=30;
+			title="Integral luminosity";
+			xtitle="Luminosity";
+			xunit="mkb^{-1}";
+			//fit="agauss";
+		}
+		kdb_lum{
+			position=1,2;
+			data="kdb::int_luminosity";
+			range=1.,5000.;
+			fill_color=38;
+			title="Database luminosity";
+			xtitle="Luminosity";
+			xunit="mkb^{-1}";
+			//fit="agauss";
+		}
+	}
+	profiles{
+		energy_set_points{
+			position=2,1;
+			data="channels::nrun":"channels::setE";
+			nbins=182;
+			xrange=7806.,7916.;
+			yrange=1838.,1848.;
+			title="Energy (set) points";
+			xtitle="Run";
+			xunit="";
+			ytitle="Energy";
+			yunit="MeV";
+		}
+		energy_cor_points{
+			position=2,2;
+			data="channels::nrun":"channels::corE";
+			nbins=182;
+			xrange=7806.,7916.;
+			yrange=1838.,1848.;
+			title="Energy (cor) points";
+			xtitle="Run";
+			xunit="";
+			ytitle="Energy";
+			yunit="MeV";
+		}
+	}
+}
+
+run_energy{	//block name is canvas name
+	canvas{
+		title="Run energy - canvas";
+		position=100,100;
+		size=800,600;	//title, position, size
+	}
+	header{
+		lines="Bhabha scattering run energy","run_list placeholder";
+	}
+	style{
+		gridx=true;
+		gridy=true;
+		opt_stat=0;
+	}
+	pad{
+		title="Run energy - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+/*	legend{
+		title="";	//no title
+		corners=0.2,0.2, 0.5,0.35;
+		option="br";
+		entries{
+			energy_cor_points="Corrected energy points","l";
+			energy_set_points="Set energy points","l";
+		}
+	}*/
+	
+	profiles{
+		energy_cor_points{
+			position=1,1;
+			data="channels::nrun":"channels::corE";
+			nbins=182;
+			xrange=7806.,7916.;
+			yrange=1738.,1848.;
+			title="Energy (cor) points";
+			xtitle="Run";
+			xunit="";
+			ytitle="Energy";
+			yunit="MeV";
+		}
+		energy_set_points{
+			position=1,2;
+			data="channels::nrun":"channels::setE";
+			nbins=182;
+			xrange=7806.,7916.;
+			yrange=1838.,1848.;
+			title="Energy (set) points";
+			xtitle="Run";
+			xunit="";
+			ytitle="Energy";
+			yunit="MeV";
+			marker_color=2;
+			line_color=2;
+		}
+		kdb_energy_points{
+			position=2,1;
+			data="channels::nrun":"kdb::energy";
+			nbins=182;
+			xrange=7806.,7916.;
+			yrange=1818.,1848.;
+			title="Energy (kdb) points";
+			xtitle="Run";
+			xunit="";
+			ytitle="Energy";
+			yunit="MeV";
+			marker_color=2;
+			line_color=2;
+		}
+		kdb_chi2_points{
+			position=2,2;
+			data="channels::nrun":"kdb::chi2";
+			nbins=182;
+			xrange=7806.,7916.;
+			yrange=-2.,15.;
+			title="dEnergy (kdb) points";
+			xtitle="Run";
+			xunit="";
+			ytitle="#chi^{2}";
+			yunit="";
+			marker_color=2;
+			line_color=2;
+		}
+	}
+}
+
+run_lkr_channels{	//block name is canvas name
+	canvas{
+		title="Run information - canvas";
+		position=100,100;
+		size=1800,600;	//title, position, size
+	}
+	header{
+		lines="Bhabha scattering run info","run_list placeholder";
+	}
+	pad{
+		title="Run information - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	style{
+	//	opt_stat=0;
+	//	gridy=true;
+	}
+	
+	histograms{
+		notgood{
+			position=1,1;
+			data="channels::LKr.notgood";
+			range=0,9600;
+			nbins=9600;
+			fill_color=3;
+			title="Not good";
+			xtitle="Channels";
+			xunit="";
+		}
+		ring{
+			position=1,2;
+			data="channels::LKr.ring";
+			range=0,9600;
+			nbins=9600;
+			fill_color=3;
+			title="Ringing";
+			xtitle="Channels";
+			xunit="";
+		}
+		bad{
+			position=1,3;
+			data="channels::LKr.bad";
+			range=0,9600;
+			nbins=9600;
+			fill_color=3;
+			title="Bad";
+			xtitle="Channels";
+			xunit="";
+		}
+	}
+}
+
+run_csi_channels{	//block name is canvas name
+	canvas{
+		title="Run information - canvas";
+		position=100,100;
+		size=1800,600;	//title, position, size
+	}
+	header{
+		lines="Bhabha scattering run info","run_list placeholder";
+	}
+	pad{
+		title="Run information - pad";
+		corners=0.02,0.02, 0.98,0.83;	//bottom left, top right [0,1]
+		color=10;
+		border=0,0;	//border size, border mode
+	}
+	style{
+		opt_stat=0;
+	//	gridy=true;
+	}
+	
+	histograms{
+		notgood{
+			position=1,1;
+			data="channels::CsI.notgood";
+			range=0,1536;
+			nbins=1536;
+			fill_color=3;
+			title="Not good";
+			xtitle="Channels";
+			xunit="";
+		}
+		ring{
+			position=1,2;
+			data="channels::CsI.ring";
+			range=0,1536;
+			nbins=1536;
+			fill_color=3;
+			title="Ringing";
+			xtitle="Channels";
+			xunit="";
+		}
+		bad{
+			position=1,3;
+			data="channels::CsI.bad";
+			range=0,1536;
+			nbins=1536;
+			fill_color=3;
+			title="Bad";
+			xtitle="Channels";
+			xunit="";
+		}
+	}
+}
