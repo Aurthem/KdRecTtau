@@ -31,7 +31,7 @@ namespace Bhabha {
 	void bhabha_event_mu(void);
 	void bhabha_event_tof(void);
 
-	void bhabha_event(void) {
+	bool bhabha_event(void) {
 		dm->clear();
 		bhabha_event_all();
 	//	const DataClass::Data<double>* tmp_lkr=dynamic_cast<const DataClass::Data<double>*>(dm->data->Get("all_bhabha::vddc.LKr.sphericity"));
@@ -54,7 +54,9 @@ namespace Bhabha {
 		//	dm->data->print();
 		//	kdisplay_event();
 			dm->next();	//fills tree
+			return true;
 		}
+		return false;
 	}
 
 	bool bhabha_prim_trig(void) {
@@ -64,7 +66,7 @@ namespace Bhabha {
 		float E_CsI[2], E_LKr;
 		kemc_energy(E_CsI,&E_LKr);
 		
-		if(dm->BuffCheck(emc,"emc_bhabha::emc_primary.total_energy",static_cast<double>(E_CsI[0]+E_CsI[1]+E_LKr),"MeV")) {
+		if(dm->BuffCheck(emc,"all_bhabha::emc_primary.total_energy",static_cast<double>(E_CsI[0]+E_CsI[1]+E_LKr),"MeV")) {
 			dm->flush();
 			result=true;
 		}
@@ -201,8 +203,11 @@ namespace Bhabha {
 			int iret=minuit->Migrad();
 			return !iret;
 		}
+		TMatrixT<double> eigenVec;
+		TVectorT<double> eigenVal;
+		bool calculatedM;
 	public:
-		JetStructure(void) {
+		JetStructure(void) : eigenVec(TMatrixT<double>(3,3)),eigenVal(TVectorT<double>(3)),calculatedM(false) {
 			minuit = new TMinuit(2);	//2 parameters (direction)
 		}
 		~JetStructure(void) { delete minuit; }
@@ -228,21 +233,46 @@ namespace Bhabha {
 			minuit->GetParameter(1,tmp_val,tmp_err); result.push_back(tmp_val);
 			return result;
 		}
-		T_pdd getSphericityM(void) const {		//without minuit, returns sphericity and aplanarity
+		T_pdd getSphericityM(void) {		//without minuit, returns sphericity and aplanarity
 			TMatrixT<double> Mpij(3,3);
 			double norm=0.;
 			for(int idx=0;idx<ktrrec_.NTRAK;++idx) {
 				double p2=ktrrec_.PTRAK[idx]*ktrrec_.PTRAK[idx];
 				double pn[3]={ ktrrec_.VxTRAK[idx], ktrrec_.VyTRAK[idx], ktrrec_.VzTRAK[idx] };
-				for(int i=0;i<3;++i) for(int j=0;j<3;++j) Mpij[i][j]+=p2*pn[i]*pn[j];
+			//	for(int i=0;i<3;++i) for(int j=0;j<3;++j) Mpij[i][j]+=p2*pn[i]*pn[j];
+				for(int i=0;i<3;++i) for(int j=i;j<3;++j) {	//upper triangle only
+					Mpij(i,j)+=p2*pn[i]*pn[j];
+				}
 				norm+=p2;
 			}
-			TVectorT<double> eigenv(3);
-			Mpij.EigenVectors(eigenv);
-			//(eigenv[0]+eigenv[1]+eigenv[2])/norm==1.;
-			return std::make_pair(
-				1.5*(1.-std::max(eigenv[0],std::max(eigenv[1],eigenv[2]))/norm),
-				1.5*std::min(eigenv[0],std::min(eigenv[1],eigenv[2]))/norm	);
+			for(int i=0;i<3;++i) for(int j=0;j<i;++j) Mpij(i,j)=Mpij(j,i);	//to avoid rounding errors, force symmetry
+			
+			if(!norm) return std::make_pair(-1.,-1.);
+			eigenVec=Mpij.EigenVectors(eigenVal);	//returns eigenvalues in descending order already (!)
+			//(eigenVal[0]+eigenVal[1]+eigenVal[2])/norm==1.;
+			calculatedM=true;
+		//	return std::make_pair(
+		//		1.5*(1.-std::max(eigenVal[0],std::max(eigenVal[1],eigenVal[2]))/norm),
+		//		1.5*std::min(eigenVal[0],std::min(eigenVal[1],eigenVal[2]))/norm	);
+			return std::make_pair(1.5*(1.-eigenVal[0]/norm),1.5*eigenVal[2]/norm);
+		}
+		T_vd getEigenVector(int idx) {	//0 - max, 2 - min	(it's already normalized to unity)
+			T_vd result;
+			if(idx<0 || idx>2 || !calculatedM) return result;
+			for(int i=0; i<3; ++i) {
+				result.push_back(eigenVec(idx,i));
+			}
+			return result;
+		}
+		T_vd getThrustAxis(void) {
+			T_vd result;
+			if(getThrust()<0) return result;
+			T_vd tmp_vec=get_params();
+			if(tmp_vec.size()<2) return result;
+			result.push_back(sin(tmp_vec[0])*cos(tmp_vec[1]));
+			result.push_back(sin(tmp_vec[0])*sin(tmp_vec[1]));
+			result.push_back(cos(tmp_vec[0]));
+			return result;
 		}
 	};
 	JetStructure::MyFCN JetStructure::fcn=JetStructure::MyFCN();
@@ -259,6 +289,7 @@ namespace Bhabha {
 			if(semc.emc_type[idx]==2) total_energy_csi+=semc.emc_energy[idx];		//CsI
 		}
 		double tmp_high_energy_lkr=0., tmp_high_energy_csi=0.;
+		bool isThereElectron=false;
 		for(int idx1=0;idx1<semc.emc_ncls;++idx1) if(semc.emc_type[idx1]==1) {
 		if(semc.emc_energy[idx1]>tmp_high_energy_lkr) {
 			if( !dm->BuffCheck(all_cr,"all_bhabha::LKr.high.cluster_energy",semc.emc_energy[idx1],"MeV")	||
@@ -281,6 +312,7 @@ namespace Bhabha {
 				dm->BuffCheck(all_cr,"all_bhabha::LKr.rel_phi",fabs(180.-fabs(semc_getPhi(idx1)-semc_getPhi(idx2))),"deg")) {
 
 					double high_track=0., low_track=0.; int high_track_idx=-1, low_track_idx=-1;
+					double high_track_divE=0., low_track_divE=0.;
 					for(short idx_tr=0;idx_tr<semc.emc_dc_ntrk[idx1];++idx_tr) {
 						int tmp_idx=semc.emc_dc_tracks[idx1][idx_tr]-1;		//starts from 1 there
 						if(tmp_idx<0) { tmp_idx=0; std::cerr<<"Track index error"<<std::endl; }
@@ -288,7 +320,7 @@ namespace Bhabha {
 							high_track=ktrrec_.PTRAK[tmp_idx];
 							high_track_idx=tmp_idx;
 						}
-					}
+					}	high_track_divE=high_track/semc.emc_energy[idx1];
 					for(short idx_tr=0;idx_tr<semc.emc_dc_ntrk[idx2];++idx_tr) {
 						int tmp_idx=semc.emc_dc_tracks[idx2][idx_tr]-1;		//starts from 1 there
 						if(tmp_idx<0) { tmp_idx=0; std::cerr<<"Track index error"<<std::endl; }
@@ -296,7 +328,7 @@ namespace Bhabha {
 							low_track=ktrrec_.PTRAK[tmp_idx];
 							low_track_idx=tmp_idx;
 						}
-					}
+					}	low_track_divE=low_track/semc.emc_energy[idx2];
 					if(high_track && low_track && high_track<low_track) {
 						if(	!dm->BuffCheck(all_cr,"all_bhabha::LKr.high.cluster_energy",semc.emc_energy[idx2],"MeV")	||
 							!dm->BuffCheck(all_cr,"all_bhabha::LKr.high.theta",semc_getTheta(idx2),"deg")				||
@@ -304,8 +336,15 @@ namespace Bhabha {
 							!dm->BuffCheck(all_cr,"all_bhabha::LKr.low.theta",semc_getTheta(idx1),"deg")	) {
 								continue;
 						}
-						double tmp=low_track; low_track=high_track; high_track=tmp;
+						std::swap(low_track,high_track);
+						std::swap(low_track_idx,high_track_idx);
+						std::swap(low_track_divE,high_track_divE);
 					}
+				//	if(high_track && !dm->BuffCheck(all_cr,"all_bhabha::LKr.high.p_div_E",high_track_divE)) continue;
+				//	if(low_track && !dm->BuffCheck(all_cr,"all_bhabha::LKr.low.p_div_E",low_track_divE)) continue;
+					if(high_track && dm->BuffCheck(all_cr,"all_bhabha::LKr.high.p_div_E",high_track_divE)) isThereElectron=true;
+					if(low_track && dm->BuffCheck(all_cr,"all_bhabha::LKr.low.p_div_E",low_track_divE)) isThereElectron=true;
+					
 					int vd_hits=0;
 					for(int idx=0;idx<ktrrec_.NTRAK;++idx) {
 						if(ktrrec_.KvdTRAK[idx]>vd_hits) vd_hits=ktrrec_.KvdTRAK[idx];
@@ -328,8 +367,29 @@ namespace Bhabha {
 					JetStructure jstruct;
 					double sph_tmp=jstruct.getSphericityM().first;	//matrix definition should calculate quicker and more precise
 					if(!(sph_tmp<0) && !dm->BuffCheck(all_cr,"all_bhabha::vddc.LKr.sphericity",sph_tmp)) continue;
+			//----added new blocks--\|/--
+					double Pt=0.;
+					for(int idx_trk=0;idx_trk<ktrrec_.NTRAK;++idx_trk) {	//perpendicular to z-axis
+						Pt+=ktrrec_.PTRAK[idx_trk]*sqrt(1-ktrrec_.VzTRAK[idx_trk]*ktrrec_.VzTRAK[idx_trk]);
+					}
+					if(!dm->BuffCheck(all_cr,"all_bhabha::vddc.LKr.pt",Pt,"MeV")) continue;
 					
-					if(SystemManager::tof.times_track_barrel.empty() && SystemManager::tof.times_emc_barrel.empty() && SystemManager::tof.times_emc_endcap.empty()) continue;
+					double run_energy=0.;
+					const std::map<T_li,RsSlurper::Status>* tmp_run_st=run_status->get();
+					for(std::map<T_li,RsSlurper::Status>::const_iterator itr_m=tmp_run_st->begin();itr_m!=tmp_run_st->end();++itr_m) {
+						T_li::const_iterator itr=std::find(itr_m->first.begin(),itr_m->first.end(),run->info->current->nrun);
+						if(itr!=itr_m->first.end()) {
+							run_energy=itr_m->second.energy;
+							break;	//first found goes
+						}
+					}
+					if(run_energy && !dm->BuffCheck(all_cr,"all_bhabha::vddc.LKr.pt_res",Pt/(fabs(2.*run_energy-total_energy_lkr-total_energy_csi)))) continue;
+			//----added new blocks--/|\--
+					int tof_nodata=0;
+					if(SystemManager::tof.times_track_barrel.empty()) ++tof_nodata;
+					if(SystemManager::tof.times_emc_barrel.empty()) ++tof_nodata;
+					if(SystemManager::tof.times_emc_endcap.empty()) ++tof_nodata;
+					if(!dm->BuffCheck(all_cr,"all_bhabha::tof.no_data",tof_nodata)) continue;
 					
 					dm->flush();
 					dm->data->Add("all_bhabha::tof.barrel.track",SystemManager::tof.times_track_barrel,"ns");
@@ -376,6 +436,7 @@ namespace Bhabha {
 				dm->BuffCheck(all_cr,"all_bhabha::CsI.rel_theta",fabs(180.-semc_getTheta(idx1)-semc_getTheta(idx2)),"deg")	&&
 				dm->BuffCheck(all_cr,"all_bhabha::CsI.rel_phi",fabs(180.-fabs(semc_getPhi(idx1)-semc_getPhi(idx2))),"deg")) {
 					double high_track=0., low_track=0.; int high_track_idx=-1, low_track_idx=-1;
+					double high_track_divE=0., low_track_divE=0.;
 					for(short idx_tr=0;idx_tr<semc.emc_dc_ntrk[idx1];++idx_tr) {
 						int tmp_idx=semc.emc_dc_tracks[idx1][idx_tr]-1;		//starts from 1 there
 						if(tmp_idx<0) { tmp_idx=0; std::cerr<<"Track index error"<<std::endl; }
@@ -383,7 +444,7 @@ namespace Bhabha {
 							high_track=ktrrec_.PTRAK[tmp_idx];
 							high_track_idx=tmp_idx;
 						}
-					}
+					}	high_track_divE=high_track/semc.emc_energy[idx1];
 					for(short idx_tr=0;idx_tr<semc.emc_dc_ntrk[idx2];++idx_tr) {
 						int tmp_idx=semc.emc_dc_tracks[idx2][idx_tr]-1;		//starts from 1 there
 						if(tmp_idx<0) { tmp_idx=0; std::cerr<<"Track index error"<<std::endl; }
@@ -391,7 +452,7 @@ namespace Bhabha {
 							low_track=ktrrec_.PTRAK[tmp_idx];
 							low_track_idx=tmp_idx;
 						}
-					}
+					}	low_track_divE=low_track/semc.emc_energy[idx2];
 					if(high_track && low_track && high_track<low_track) {
 						if(	!dm->BuffCheck(all_cr,"all_bhabha::CsI.high.cluster_energy",semc.emc_energy[idx2],"MeV")||
 							!dm->BuffCheck(all_cr,"all_bhabha::CsI.high.theta",semc_getTheta(idx2),"deg")			||
@@ -401,8 +462,15 @@ namespace Bhabha {
 							!dm->BuffCheck(all_cr,"all_bhabha::CsI.low.rho",semc.emc_rho[idx1],"cm")	) {
 								continue;
 						}
-						double tmp=low_track; low_track=high_track; high_track=tmp;
+						std::swap(low_track,high_track);
+						std::swap(low_track_idx,high_track_idx);
+						std::swap(low_track_divE,high_track_divE);
 					}
+				//	if(high_track && !dm->BuffCheck(all_cr,"all_bhabha::CsI.high.p_div_E",high_track_divE)) continue;
+				//	if(low_track && !dm->BuffCheck(all_cr,"all_bhabha::CsI.low.p_div_E",low_track_divE)) continue;
+					if(high_track && dm->BuffCheck(all_cr,"all_bhabha::CsI.high.p_div_E",high_track_divE)) isThereElectron=true;
+					if(low_track && dm->BuffCheck(all_cr,"all_bhabha::CsI.low.p_div_E",low_track_divE)) isThereElectron=true;
+					
 					int vd_hits=0;
 					for(int idx=0;idx<ktrrec_.NTRAK;++idx) {
 						if(ktrrec_.KvdTRAK[idx]>vd_hits) vd_hits=ktrrec_.KvdTRAK[idx];
@@ -421,6 +489,28 @@ namespace Bhabha {
 					
 					if(total_energy_csi!=0. && !dm->BuffCheck(all_cr,"all_bhabha::CsI.energy_div_total",static_cast<double>((semc.emc_energy[idx1]+semc.emc_energy[idx2])/total_energy_csi)) ) continue;
 					
+					JetStructure jstruct;
+					double sph_tmp=jstruct.getSphericityM().first;	//matrix definition should calculate quicker and more precise
+					if(!(sph_tmp<0) && !dm->BuffCheck(all_cr,"all_bhabha::vddc.CsI.sphericity",sph_tmp)) continue;
+			//----added new blocks--\|/--
+					double Pt=0.;
+					for(int idx_trk=0;idx_trk<ktrrec_.NTRAK;++idx_trk) {	//perpendicular to z-axis
+						Pt+=ktrrec_.PXYTRK[idx_trk];
+					}
+					if(!dm->BuffCheck(all_cr,"all_bhabha::vddc.CsI.pt",Pt,"MeV")) continue;
+					
+					double run_energy=0.;
+					const std::map<T_li,RsSlurper::Status>* tmp_run_st=run_status->get();
+					for(std::map<T_li,RsSlurper::Status>::const_iterator itr_m=tmp_run_st->begin();itr_m!=tmp_run_st->end();++itr_m) {
+						T_li::const_iterator itr=std::find(itr_m->first.begin(),itr_m->first.end(),run->info->current->nrun);
+						if(itr!=itr_m->first.end()) {
+							run_energy=itr_m->second.energy;
+							break;	//first found goes
+						}
+					}
+					if(run_energy && !dm->BuffCheck(all_cr,"all_bhabha::vddc.CsI.pt_res",Pt/(fabs(2.*run_energy-total_energy_lkr-total_energy_csi)))) continue;
+			//----added new blocks--/|\--
+
 					int tof_nodata=0;
 					if(SystemManager::tof.times_track_barrel.empty()) ++tof_nodata;
 					if(SystemManager::tof.times_emc_barrel.empty()) ++tof_nodata;
@@ -459,6 +549,7 @@ namespace Bhabha {
 				}
 			}
 		} }
+		if(!isThereElectron) dm->clear();
 	}
 	void bhabha_event_lkr() {
 		dm->clear_buf();

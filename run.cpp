@@ -35,7 +35,7 @@ void Run::clear(void) {
 	params.clear();
 }
 
-void Run::all( bool(*primary_trigger_function)(), void(*event_function)() ) {
+void Run::all( bool(*primary_trigger_function)(), bool(*event_function)() ) {
 	int err=0, nev=0, rec;
 //	if(params.GetChar("sim_cosm_deb",0)=='0') dm.init("runs");	//will go here in case of multiple calls
 	TBenchmark* my_bench = new TBenchmark();
@@ -100,6 +100,7 @@ std::cout<<std::endl;
 		char nat_file[200];
 		sprintf(nat_file,run_mask.c_str());
 		kedr_open_nat(nat_file,&err);
+//!		KedrFortran::SepBeams_nextRun();
 		if(err) {
 			printf("open error for %s\n",nat_file);
 			exit(3);
@@ -118,6 +119,7 @@ std::cout<<"\tSet run "<<*itrr<<std::endl;
 			char nat_file[200];
 			sprintf(nat_file,run_mask.c_str(),*itrr);
 			kedr_open_nat(nat_file,&err);
+//!			KedrFortran::SepBeams_nextRun();
 			if(err) {
 				printf("open error for %s\n",nat_file);
 				continue;
@@ -147,8 +149,11 @@ std::cout<<"\tSet run "<<*itrr<<std::endl;
 		int Nev_max=(IOglobals::popts->isGiven("sim") ? Nev_interv[*itrr] : Nev_val[1]);
 		while(nev<Nev_max) {
 			kedr_read_nat(&err); if(err) break;
+//!		if(	(KedrFortran::kedr_read_nat_cb1_.MCfile ?
+//!		!(KedrFortran::kedr_read_nat_cb1_.NevReadTot%100) : kedrraw_.Header.RecID==201)	)
+//!			KedrFortran::SepBeams_nextFrame();
 			
-			if(!IOglobals::popts->isGiven("sim")) {
+			/*if(!IOglobals::popts->isGiven("sim")) {
 				if(kedrraw_.Header.RunNumber!=*itrr) {
 					std::cerr<<"Error in run number: "<<*itrr<<"!="<<kedrraw_.Header.RunNumber
 						<<"\tevent="<<nev<<std::endl;
@@ -176,7 +181,7 @@ std::cout<<"\tSet run "<<*itrr<<std::endl;
 				//	std::cerr<<"Beams are separated\tevent="<<nev<<std::endl;
 					continue;
 				}
-			}
+			}*/
 			
 			info->current->nread++;
 			nev++;
@@ -195,7 +200,34 @@ std::cout<<"\tSet run "<<*itrr<<std::endl;
 			SystemManager::tof.process_event();
 			SystemManager::mu.process_event();
 			
-			if(event_function) event_function();	//if function is not NULL, run it
+			bool event_filled=false;
+			if(event_function) {	//if function is not NULL, run it
+				event_filled=event_function();
+			}
+			int Nreport=10000;
+			int c1,c2,c3,c4,c5,c6,c7,c8;
+			c1=c2=c3=c4=c5=c6=c7=c8=0;
+			c1=static_cast<int>(event_filled);
+		//	kedrsepbeams_(&Nreport,&c1,&c2,&c3,&c4,&c5,&c6,&c7,&c8);
+//!			KedrFortran::SepBeams(Nreport,c1,c2,c3,c4,c5,c6,c7,c8);
+			int nbins=250,id=100,pawcsize=30000;
+			double vmin=-50.,vmax=50.;
+			double zpw=0.,zav=0.,zchi2=0.,wpw=0.,wav=0.,wchi2=0,www=0.;
+			if(eTracksAll>0) {
+				for(int itr=0;itr<eTracksAll;++itr) {
+					www=2.*(tPt(itr)*tPt(itr))/(1.e+6+tPt(itr)*tPt(itr));
+					wpw+=www;
+					zpw+=(tZ0IP(itr)*www);
+					www=0.5*(tHits(itr)/tCh2(itr)+2.*(tPt(itr)*tPt(itr))/(1.e+6+tPt(itr)*tPt(itr)));
+					wchi2+=www;
+					zchi2+=(tZ0IP(itr)*www);
+					wav+=1.;
+					zav+=tZ0IP(itr);
+				}
+				zpw/=wpw; zchi2/=wchi2; zav/=wav;
+			}
+		//	kedrsepbeams_hist_(&pawcsize,&id,&static_cast<float>(zchi2),&nbins,&static_cast<float>(vmin),&static_cast<float>(vmax));
+//!			KedrFortran::SepBeams_hist(pawcsize,id,zchi2,nbins,vmin,vmax);
 		}//end of event loop
 		
 std::cout<<"kedrrun_cb_.Header.RunType="<<static_cast<int>(kedrrun_cb_.Header.RunType)
@@ -208,6 +240,9 @@ if(!IOglobals::popts->isGiven("sim")) std::cout<<"Luminosity: lumeC="<<lumeC*100
 		my_bench->Reset();
 
 		if(!IOglobals::popts->isGiven("sim")) { close_nat(); }
+		
+	//	kedrsepbeams_report_();
+//!		KedrFortran::SepBeams_report();
 	} // end of loop over runs
 	if(IOglobals::popts->isGiven("sim")) { close_nat(); }
 	

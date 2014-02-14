@@ -19,7 +19,7 @@ class DataManager {
 public:
 	DataManager(const T_s& ext_path="/spool/users/boroden/trees", const T_s& treename="", bool update=false);
 	virtual ~DataManager();
-	void clear(void) { clear_buf(); data->clear(); reset(); }
+	void clear(void) { clear_buf(); data->clear(); reset(); }	//clears and resets reading
 	void clear_buf(void) { buffer.clear(); }
 	void init(const T_s& treename="", bool update=false);
 	void init_skim(const T_s& headname="/spool/users/boroden/skim/skim_ee");

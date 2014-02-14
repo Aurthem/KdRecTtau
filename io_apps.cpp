@@ -45,7 +45,7 @@ ProgramOptions::ProgramOptions(int argc, char *argv[]) {
 	}
 	
 	const T_s* path_ptr=getValue("path");
-	path=(path_ptr? *path_ptr : T_s("/home/boroden/current/KdRecTtau"));
+	path=(path_ptr? *path_ptr : T_s("/spool/users/boroden/current/KdRecTtau"));
 	while(path.rbegin()!=path.rend() && *(path.rbegin())=='/') path.erase(path.end()-1);	//patch for tab completion path
 }
 ProgramOptions::~ProgramOptions(void) {

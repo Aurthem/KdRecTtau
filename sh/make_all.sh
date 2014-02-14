@@ -1,4 +1,4 @@
-CURRENT_PROGRAM_PATH=~/current/KdRecTtau
+CURRENT_PROGRAM_PATH=/spool/users/boroden/current/KdRecTtau
 CURRENT_DATACLASS_PATH="$CURRENT_PROGRAM_PATH"/DataClass
 
 #call clean to delete previous

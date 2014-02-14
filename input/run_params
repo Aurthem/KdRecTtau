@@ -14,7 +14,7 @@ bhabha{
 //	run_list={3519-3574,3844-3909,4710-5054,7806-7916,8208-8371,8872-9075,10160-10984,10985-11208,16338-17029};
 //	run_list={7806-7916,8208-8371,8872-9075};	//E=1843 MeV
 	run_list={7806-7916};
-	exp_events=0,5000,20000000;	//min, max, draw_everyN
+	exp_events=0,2000,20000000;	//min, max, draw_everyN
 //	exp_events=0,10000000,20000000;	//min, max, draw_everyN
 
 //	sim_mask="/store/sim/ee/Bhabha/1530/theta-15-165-Real-51.dat";

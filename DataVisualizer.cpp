@@ -823,7 +823,7 @@ std::cout<<"Divided pad into "<<padx<<"|"<<pady<<" with "<<duplicates<<" duplica
 	
 //	cv->Draw();
 	T_s pic_path=parent->GetPath();
-	if(pic_path==T_s("/home/boroden/current/KdRecTtau")) pic_path="/spool/users/boroden/trees/pics";
+	if(pic_path==T_s("/spool/users/boroden/current/KdRecTtau")) pic_path="/spool/users/boroden/trees/pics";
 	cv->Print( (pic_path+"/"+cv->GetName()+parent->label+".eps").c_str() );
 }
 

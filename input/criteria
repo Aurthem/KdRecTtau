@@ -6,148 +6,70 @@ before the curly brackets goes parameter name, after the curly brackets go stand
 Duplicate blocks and empty limits are supported.
 /*/
 
-all_bhabha{		//from todyshev's phd (almost)
-	emc_primary{	//primary trigger is looked at emc_bhabha::emc_primary.total_energy, so change it there
-		total_energy={>2000}MeV;			//(2)
+all_bhabha{
+	emc_primary{
+		total_energy={<3000}MeV;
 	}
 	mu{
-		hit_type={<20};
+//		hit_type={<20};
 	}
 	tof{
-		no_data={<3};	//how many hit types (out of 3) were not registered
+//		no_data={<3};	//how many hit types (out of 3) were not registered
 	}
 	LKr{
 		high{
-			cluster_energy={>450}MeV;		//(1)
+		//	cluster_energy={>450}MeV;		//(1)
 			theta={40%140}deg;			//(1_lkr)
+		//	p_div_E={>0.5};
 		}
 		low{
-			cluster_energy={>450}MeV;		//(1)
+		//	cluster_energy={>450}MeV;		//(1)
 		//	theta={41%139}deg;
+		//	p_div_E={>0.5};
 		}
 	//	energy_diff={<1000.}MeV;
-		energy_div_total={>0.9};			//(3)
-	//	rel_angle={<11}deg;
-		rel_theta={<15}deg;				//(2_lkr)
-		rel_phi={<15}deg;				//(2_lkr)
-		residue40={<3};						//(5)
+//		energy_div_total={<0.9};			//(3)
+//		rel_angle={>35}deg;
+	//	rel_theta={<15}deg;
+	//	rel_phi={<15}deg;
+		residue40={<4};						//(5)
 		residue80={<2};						//(6)
 	}
 	CsI{
 		high{
-			cluster_energy={>450}MeV;		//(1)
+		//	cluster_energy={>450}MeV;		//(1)
 			theta={20%31,149%160}deg;	//(1_csi)
 			rho={32 % 54}cm;			//(1_csi)
+		//	p_div_E={>0.5};
 		}
 		low{
-			cluster_energy={>450}MeV;		//(1)
+		//	cluster_energy={>450}MeV;		//(1)
 		//	theta={22%29,151%158}deg;
 		//	rho={30 % 54}cm;
+		//	p_div_E={>0.5};
 		}
 	//	energy_diff={<1000.}MeV;
-		energy_div_total={>0.9};			//(3)
-	//	rel_angle={<10}deg;
-		rel_theta={<7}deg;				//(2_csi)
-		rel_phi={<18}deg;				//(2_csi)
-		residue40={<3};						//(5)
+//		energy_div_total={<0.9};			//(3)
+//		rel_angle={>35}deg;
+	//	rel_theta={<7}deg;
+	//	rel_phi={<18}deg;
+		residue40={<4};						//(5)
 		residue80={<2};						//(6)
 	}
 	vddc{
-		op_tracks={<4};						//(4)
+	//	op_tracks={>2};
 		LKr{
 			vd_hits={>10000};	//to ignore this check inside
-			r_tracks={<3};	//two tracks in xy projection(?)
-			sphericity={<0.05};
+	//		r_tracks={>1};	//two tracks in xy projection(?)
+	//		sphericity={>0.05};
+			pt={>200.}MeV;
+			pt_res={>0.06};
 		}
 		CsI{
-			vd_hits={>5};				//(3_csi)
+	//		vd_hits={>5};				//(3_csi)
+	//		sphericity={>0.05};
+			pt={>200.}MeV;
+			pt_res={>0.06};
 		}
-	}
-}
-
-emc_bhabha{
-	emc_primary{	//primary trigger
-		total_energy={>2000}MeV;	//CsI(left+right)+LKr
-	}
-	LKr{
-		high{
-			cluster_energy={>1100}MeV;
-	//		edge_maxcells={<1};	//"quality" of cluster = number of max cells on its edge
-	//		bad_cells={<11};
-			theta={43%137}deg;	//{45%135}deg;
-		}
-		low{
-			cluster_energy={>700}MeV;
-	//		edge_maxcells={<1};
-	//		bad_cells={<11};
-			theta={41%139}deg;	//{45%135}deg;
-		}
-	//	energy_diff={<1000.}MeV;	//energy difference in a pair of clusters
-		rel_angle={<11}deg;		//180 - relative angle between clusters (i.e. collinearity)
-		rel_theta={<7}deg;
-		rel_phi={<12}deg;
-	}
-	CsI{
-		high{
-			cluster_energy={>1100}MeV;
-	//		edge_maxcells={<1};
-	//		bad_cells={<11};
-			theta={24%27,153%156}deg;	//{18%30,150%165}deg;
-		//	rho={30 % 54}cm;	//distance from Z axis
-		}
-		low{
-			cluster_energy={>700}MeV;
-	//		edge_maxcells={<1};
-	//		bad_cells={<11};
-			theta={22%29,151%158}deg;	//{18%30,150%165}deg;
-		//	rho={30 % 54}cm;
-		}
-	//	energy_diff={<1000.}MeV;
-		rel_angle={<10}deg;
-		rel_theta={<8}deg;
-		rel_phi={<12}deg;
-	}
-	emc{	//LKr+CsI
-		high{
-			energy={>1150}MeV;
-			merged_energy={>1150}MeV;
-			theta={24%27,43%137,153%156}deg;	//{18%30,45%135,150%165}deg;
-			merged_theta={24%27,43%137,153%156}deg;
-		}
-		low{
-			energy={>800}MeV;
-			merged_energy={>800}MeV;
-			theta={22%29,41%139,151%158}deg;
-			merged_theta={22%29,41%139,151%158}deg;
-		}
-		collinearity={<10}deg;
-		coll_theta={<8}deg;
-		coll_phi={<12}deg;
-		merged_collinearity={<10}deg;
-		merged_coll_theta={<8}deg;
-		merged_coll_phi={<12}deg;
-	}
-}
-
-vddc_bhabha{
-	op_tracks={0%4};
-	all_tracks={<15};
-	track{
-		high{
-			momentum={<5000.}MeV;
-			op_x={-3.%3.}cm;	op_y={-3.%3.}cm;	op_z={-7.%7.}cm;
-		//	op_nx={<0.95};		op_ny={>0.01};		op_nz={>0.01};
-			vd_hits={>3};
-		//	charge={-1%1};
-		}
-		low{
-			momentum={<4000.}MeV;
-			op_x={-3.%3.}cm;	op_y={-3.%3.}cm;	op_z={-7.%7.}cm;
-		//	op_nx={<0.95};		op_ny={>0.01};		op_nz={>0.01};
-			vd_hits={>2};
-		//	charge={-1%1};
-		}
-		momentum_diff={<10000.}MeV;
-		rel_angle={<15.}deg;
 	}
 }

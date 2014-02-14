@@ -14,11 +14,20 @@
 #include "io_apps.h"
 #include "criteria.h"
 
+#include "sep_beams.h"
+#include "VDDCRec/ktracks.h"		//ktrrec_, ktrrec_h_
+
 #include "DataManager.h"
 #include "SystemManager.h"
 
 #ifndef aurthem_run
 #define aurthem_run
+
+extern "C" {
+	void kedrsepbeams_(int* NrepArg, int* c1, int* c2, int* c3, int* c4, int* c5, int* c6, int* c7, int* c8);
+	void kedrsepbeams_report_(void);
+	void kedrsepbeams_hist_(int* pawcsize, int* IDarg, float* val, int* Nbins, float* vmin, float* vmax);
+}
 
 class Run { //run.cpp
 public:
@@ -27,7 +36,7 @@ public:
 	void clear(void);	//clear all data
 
 	//cycles through runs and events, calling user function on each event
-	void all( bool(*primary_trigger_function)(), void(*event_function)() );
+	void all( bool(*primary_trigger_function)(), bool(*event_function)() );
 	void check( void(*event_function)() );	//only check runs with user function (don't cycle through events)
 
 	//class to contain information about all runs

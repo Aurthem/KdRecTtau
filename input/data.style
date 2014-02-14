@@ -44,7 +44,7 @@ cluster_energy{	//block name is canvas name
 		energy1{
 			position=1,1;
 			data="all_bhabha::LKr.high.cluster_energy","all_bhabha::LKr.low.cluster_energy";
-			range=1000.,2300.;
+			range=0.,3000.;
 			fill_color=30;
 			title="LKr Energy";
 			xtitle="Energy";
@@ -54,7 +54,7 @@ cluster_energy{	//block name is canvas name
 		energy2{
 			position=1,2;
 			data="all_bhabha::CsI.high.cluster_energy","all_bhabha::CsI.low.cluster_energy";
-			range=1000.,2300.;
+			range=0.,3000.;
 			fill_color=38;
 			title="CsI Energy";
 			xtitle="Energy";
@@ -106,7 +106,7 @@ cluster_tracks{
 		lkr_high{
 			position=1,1;
 			data="all_bhabha::LKr.high.track_momentum";
-			range=0.,3700.;
+			range=0.,5000.;
 			fill_color=30;
 			title="LKr high momentum";
 			xtitle="Momentum";
@@ -116,7 +116,7 @@ cluster_tracks{
 		lkr_low{
 			position=2,1;
 			data="all_bhabha::LKr.low.track_momentum";
-			range=0.,3700.;
+			range=0.,4000.;
 			fill_color=38;
 			title="LKr low momentum";
 			xtitle="Momentum";
@@ -136,7 +136,7 @@ cluster_tracks{
 		csi_low{
 			position=2,2;
 			data="all_bhabha::CsI.low.track_momentum";
-			range=0.,5000.;
+			range=0.,4000.;
 			fill_color=#fa5509;
 			title="CsI low momentum";
 			xtitle="Momentum";
@@ -168,7 +168,7 @@ cluster_rel_angles{	//block name is canvas name
 		coll1{
 			position=1,1;
 			data="all_bhabha::LKr.rel_angle";
-			range=0.,12.;
+			range=0.,180.;
 			fill_color=#007D08;
 			title="LKr Collinearity Angle";
 			xtitle="#alpha";
@@ -178,7 +178,7 @@ cluster_rel_angles{	//block name is canvas name
 		theta1{
 			position=2,1;
 			data="all_bhabha::LKr.rel_theta";
-			range=0.,12.;
+			range=0.,180.;
 			fill_color=#009E0B;
 			title="LKr #theta angle";
 			xtitle="#theta";
@@ -188,7 +188,7 @@ cluster_rel_angles{	//block name is canvas name
 		phi1{
 			position=3,1;
 			data="all_bhabha::LKr.rel_phi";
-			range=0.,15.;
+			range=0.,180.;
 			fill_color=#00CC0E;
 			title="LKr #phi angle";
 			xtitle="#phi";
@@ -198,7 +198,7 @@ cluster_rel_angles{	//block name is canvas name
 		coll2{
 			position=1,2;
 			data="all_bhabha::CsI.rel_angle";
-			range=0.,12.;
+			range=0.,180.;
 			fill_color=#003878;
 			title="CsI Collinearity Angle";
 			xtitle="#alpha";
@@ -208,7 +208,7 @@ cluster_rel_angles{	//block name is canvas name
 		theta2{
 			position=2,2;
 			data="all_bhabha::CsI.rel_theta";
-			range=0.,12.;
+			range=0.,180.;
 			fill_color=#004FA8;
 			title="CsI #theta angle";
 			xtitle="#theta";
@@ -218,7 +218,7 @@ cluster_rel_angles{	//block name is canvas name
 		phi2{
 			position=3,2;
 			data="all_bhabha::CsI.rel_phi";
-			range=0.,15.;
+			range=0.,180.;
 			fill_color=#0064D6;
 			title="CsI #phi angle";
 			xtitle="#phi";
@@ -250,7 +250,7 @@ cluster_updown{	//block name is canvas name
 		up_cluster{
 			position=1,1;
 			data="all_bhabha::CsI.high.up_cluster","all_bhabha::CsI.low.up_cluster";
-			range=1000.,2300.;
+			range=0.,3000.;
 			fill_color=0;
 		//	marker_color=30;
 			line_color=30;
@@ -264,7 +264,7 @@ cluster_updown{	//block name is canvas name
 		down_cluster{
 			position=1,1;
 			data="all_bhabha::CsI.high.down_cluster","all_bhabha::CsI.low.down_cluster";
-			range=1000.,2300.;
+			range=0.,3000.;
 			fill_color=0;
 		//	marker_color=38;
 			line_color=38;
@@ -297,11 +297,11 @@ sph_hits{
 	}
 	
 	histograms{
-		nbins=35;
+		nbins=100;
 		lkr_ntr{
 			position=1,1;
 			data="all_bhabha::LKr.ntracks";
-			range=-1.,3.;
+			range=-1.,8.;
 			fill_color=#007D08;
 			title="LKr track number";
 			xtitle="Tracks";
@@ -310,7 +310,7 @@ sph_hits{
 		csi_ntr{
 			position=1,2;
 			data="all_bhabha::CsI.ntracks";
-			range=-1.,3.;
+			range=-1.,8.;
 			fill_color=#009E0B;
 			title="CsI track number";
 			xtitle="Tracks";
@@ -329,7 +329,7 @@ sph_hits{
 		lkr_sphericity{
 			position=2,2;
 			data="all_bhabha::vddc.LKr.sphericity";
-			range=0,0.01;
+			range=0.,1.;
 			fill_color=#003878;
 			title="LKr sphericity";
 			xtitle="Sphericity";
@@ -362,7 +362,7 @@ theta_resolution{	//block name is canvas name
 	}
 	legend{
 		title="";	//no title
-		corners=0.35,0.6, 0.65,0.5;
+		corners=0.35,0.6, 0.65,0.55;
 		option="br";
 		entries{
 			theta_LKr="LKr resolution","l";
@@ -377,7 +377,7 @@ theta_resolution{	//block name is canvas name
 				"all_bhabha::LKr.low.theta":"all_bhabha::LKr.low.cluster_energy";
 			nbins=180;
 			xrange=0.,180.;
-			yrange=0.,2300.;
+			yrange=0.,3000.;
 			title="Theta resolution";
 			xtitle="#theta";
 			xunit="deg";
@@ -390,8 +390,8 @@ theta_resolution{	//block name is canvas name
 				"all_bhabha::CsI.low.theta":"all_bhabha::CsI.low.cluster_energy";
 			nbins=180;
 			xrange=0.,180.;
-			yrange=0.,2300.;
-			title="Merged_theta resolution";
+			yrange=0.,3000.;
+			title="Theta resolution";
 			xtitle="#theta";
 			xunit="deg";
 			ytitle="Energy";
@@ -405,8 +405,8 @@ theta_resolution{	//block name is canvas name
 				"all_bhabha::CsI.high.theta":"all_bhabha::CsI.high.cluster_energy";
 			nbins=180;
 			xrange=0.,180.;
-			yrange=0.,2300.;
-			title="Merged_theta resolution";
+			yrange=0.,3000.;
+			title="High theta resolution";
 			xtitle="#theta";
 			xunit="deg";
 			ytitle="Energy";
@@ -420,8 +420,8 @@ theta_resolution{	//block name is canvas name
 				"all_bhabha::CsI.low.theta":"all_bhabha::CsI.low.cluster_energy";
 			nbins=180;
 			xrange=0.,180.;
-			yrange=0.,2300.;
-			title="Merged_theta resolution";
+			yrange=0.,3000.;
+			title="Low theta resolution";
 			xtitle="#theta";
 			xunit="deg";
 			ytitle="Energy";
@@ -452,7 +452,7 @@ inv_diff{	//block name is canvas name
 		ediff1{
 			position=1,1;
 			data="all_bhabha::LKr.energy_diff";
-			range=0.,500.;
+			range=0.,1000.;
 			fill_color=30;
 			title="LKr Energy diff";
 			xtitle="Energy";
@@ -461,7 +461,7 @@ inv_diff{	//block name is canvas name
 		ediff2{
 			position=1,2;
 			data="all_bhabha::CsI.energy_diff";
-			range=0.,500.;
+			range=0.,1000.;
 			fill_color=38;
 			title="CsI Energy diff";
 			xtitle="Energy";
@@ -470,7 +470,7 @@ inv_diff{	//block name is canvas name
 		invmass1{
 			position=2,1;
 			data="all_bhabha::LKr.invMass";
-			range=1900.,4600.;
+			range=0.,4600.;
 			fill_color=3;
 			title="LKr inv mass";
 			xtitle="M_{ee}";
@@ -480,7 +480,7 @@ inv_diff{	//block name is canvas name
 		invmass2{
 			position=2,2;
 			data="all_bhabha::CsI.invMass";
-			range=1900.,4600.;
+			range=0.,4600.;
 			fill_color=7;
 			title="CsI inv mass";
 			xtitle="M_{ee}";
@@ -516,7 +516,8 @@ tof_times{
 			title="ToF from tracks";
 			xtitle="Time";
 			xunit="ns";
-			fit="gauslog";
+			special="logy";
+		//	fit="gauslog";
 		}
 		barrel_emc{
 			position=1,2;
@@ -526,7 +527,8 @@ tof_times{
 			title="ToF from calorimeter data";
 			xtitle="Time";
 			xunit="ns";
-			fit="gauslog";
+			special="logy";
+		//	fit="gauslog";
 		}
 		endcap_emc{
 			position=1,3;
@@ -536,7 +538,8 @@ tof_times{
 			title="ToF from calorimeter data, endcap";
 			xtitle="Time";
 			xunit="ns";
-			fit="gauslog";
+			special="logy";
+		//	fit="gauslog";
 		}
 	}
 }
@@ -586,7 +589,7 @@ track_data{
 			title="Original track #theta";
 			xtitle="#theta";
 			xunit="deg";
-			fit="gauslog";
+		//	fit="gauslog";
 		}
 		track_phi{
 			position=2,2;
@@ -596,7 +599,27 @@ track_data{
 			title="Original track #phi";
 			xtitle="#phi";
 			xunit="deg";
-			fit="gauslog";
+		//	fit="gauslog";
+		}
+		tr_momenta{
+			position=3,1;
+			data="all_bhabha::vddc.LKr.pt","all_bhabha::vddc.CsI.pt";
+			range=0.,1200.;
+			fill_color=#729E9E;
+			title="Transverse momenta";
+			xtitle="Momentum";
+			xunit="MeV";
+		//	fit="gauslog";
+		}
+		tr_mom_div{
+			position=3,2;
+			data="all_bhabha::vddc.LKr.pt_res","all_bhabha::vddc.CsI.pt_res";
+			range=0.,1.05;
+			fill_color=#003878;
+			title="Pt/(2E-W)";
+			xtitle="Pt div";
+			xunit="";
+		//	fit="gauslog";
 		}
 	}
 }

@@ -142,8 +142,8 @@ private:
 
 class LumReader {
 public:
-	LumReader(void) : path("/home/boroden/current/KdRecTtau") { }
-	LumReader(const std::map<int,double>& ext_data) : data(ext_data),path("/home/boroden/current/KdRecTtau") { }
+	LumReader(void) : path("/spool/users/boroden/current/KdRecTtau") { }
+	LumReader(const std::map<int,double>& ext_data) : data(ext_data),path("/spool/users/boroden/current/KdRecTtau") { }
 	
 	void setPath(const T_s& ext_path) { path=ext_path; }
 	

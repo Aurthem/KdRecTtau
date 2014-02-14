@@ -42,10 +42,11 @@ echo "label='$label', global_path='$global_path', options ignored: $@, sim_label
 #log files should have diff label for simulation
 
 echo "qsub call:"
-qsub -q remote -soft -l time=10:30:00 -m bea -M aurthem@gmail.com \
-	-wd /home/boroden/current/KdRecTtau -S /bin/bash \
+qsub -q remote -soft -l time=25:00:00 -m bea -M aurthem@gmail.com \
+	-wd /spool/users/boroden/current/KdRecTtau -S /bin/bash \
 	-e $global_path/remote${label}${sim_label}.err -o $global_path/remote${label}${sim_label}.log \
-	/home/boroden/current/KdRecTtau/sh/run.sh --remote --path $global_path --label $label $@
+	/spool/users/boroden/current/KdRecTtau/sh/run.sh --remote --path \
+	$global_path --label $label $@
 echo "done"
 #	-t 7883-7893:1 \
 #	-e /home/boroden/current/log/remote-$JOB_NAME-$JOB_ID-$TASK_ID.err \

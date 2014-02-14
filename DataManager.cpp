@@ -5,7 +5,7 @@
 DataManager::DataManager(const T_s& ext_path, const T_s& treename, bool update)
 : path(ext_path), hfile(0),tree(0),branch(0), skimstream(0) {
 	data = new DataClass();
-	if(path==T_s("/home/boroden/current/KdRecTtau")) path="/spool/users/boroden/trees";
+	if(path==T_s("/spool/users/boroden/current/KdRecTtau")) path="/spool/users/boroden/trees";
 	init(treename,update);
 }
 DataManager::~DataManager() {
@@ -53,7 +53,7 @@ bool DataManager::read(const T_s& treename) {
 	if(treename.empty()) return false;
 	
 	if (!TClassTable::GetDict("DataClass")) {
-		gSystem->Load("~/current/lib/libDataClass.so");
+		gSystem->Load("/spool/users/boroden/current/lib/libDataClass.so");
 	}
 	
 	name=base_name;
